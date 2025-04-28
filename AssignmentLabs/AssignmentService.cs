@@ -22,7 +22,6 @@ namespace AssignmentLibrary
 
         public List<Assignment> ListIncomplete()
         {
-            // TODO: Return only assignments where IsCompleted is false
             return assignments.Where(a => !a.IsCompleted).ToList();
         }
     }
