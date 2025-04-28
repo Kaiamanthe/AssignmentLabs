@@ -11,7 +11,7 @@
         {
             // Arrange
             var service = new AssignmentService();
-            var assignment = new Assignment("Read Chapter 3", "Answer question 1-8");
+            var assignment = new Assignment("Read Chapter 3", "Answer question 1-8", false);
 
             // Act
             service.AddAssignment(assignment);
@@ -27,8 +27,8 @@
         {
             // Arrange
             var service = new AssignmentService();
-            var assignment1 = new Assignment("As 1 Read Chapter 1", "Anotate chapter 1");
-            var assignment2 = new Assignment("Chapter 1 worksheet", "Answer question 1-9");
+            var assignment1 = new Assignment("As 1 Read Chapter 1", "Anotate chapter 1", false);
+            var assignment2 = new Assignment("Chapter 1 worksheet", "Answer question 1-9", false);
 
             service.AddAssignment(assignment1);
             service.AddAssignment(assignment2);
@@ -40,6 +40,27 @@
             Assert.Equal(2, assignments.Count);
             Assert.Contains(assignment1, assignments);
             Assert.Contains(assignment2, assignments);
+        }
+
+        [Fact]
+        public void ListIncomplete_ShouldReturnOnlyIncompleteAssignments()
+        {
+            // Arrange
+            var service = new AssignmentService();
+            var assignment1 = new Assignment("As 1 Read Chapter 1", "Anotate chapter 1", false);
+            var assignment2 = new Assignment("Chapter 1 worksheet", "Answer question 1-9", false);
+
+
+            // Act
+            assignment2.MarkComplete();
+            service.AddAssignment(assignment1);
+            service.AddAssignment(assignment2);
+            var incompleteAssignments = service.ListIncomplete();
+
+            // Assert
+            Assert.Single(incompleteAssignments);
+            Assert.Contains(assignment1, incompleteAssignments);
+            Assert.DoesNotContain(assignment2, incompleteAssignments);
         }
     }
 }
