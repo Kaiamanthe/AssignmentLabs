@@ -62,5 +62,18 @@
             Assert.Contains(assignment1, incompleteAssignments);
             Assert.DoesNotContain(assignment2, incompleteAssignments);
         }
+
+        [Fact]
+        public void ListIncomplete_ShouldReturnEmptyList_NoAssignment()
+        {
+            // Arrange
+            var service = new AssignmentService();
+
+            // Act
+            var incompleteAssignments = service.ListIncomplete();
+
+            // Assert
+            Assert.Empty(incompleteAssignments);
+        }
     }
 }
