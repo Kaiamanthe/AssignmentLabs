@@ -3,7 +3,7 @@
     using Xunit;
     using AssignmentLibrary;
 
-    public class AssignmentServiceTests
+    public class AssignmentServiceTest
     {
 
         [Fact]
