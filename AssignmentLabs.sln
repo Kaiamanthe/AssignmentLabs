@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary", "AssignmentLabs\AssignmentLibrary.csproj", "{9B529722-9BED-42F7-9F0C-CB6B14D555A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.Core", "AssignmentLabs\AssignmentLibrary.Core.csproj", "{9B529722-9BED-42F7-9F0C-CB6B14D555A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.Test", "AssignmentLibrary.Test\AssignmentLibrary.Test.csproj", "{7FD43ACE-3993-494D-9024-B796B707EFFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.UI", "AssignmentManagement.UI\AssignmentLibrary.UI.csproj", "{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7FD43ACE-3993-494D-9024-B796B707EFFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FD43ACE-3993-494D-9024-B796B707EFFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FD43ACE-3993-494D-9024-B796B707EFFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

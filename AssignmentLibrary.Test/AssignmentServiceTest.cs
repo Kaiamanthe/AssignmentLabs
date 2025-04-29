@@ -84,8 +84,8 @@
             var incompleteAssignment = new Assignment("Chapter 1", "Annotate Chapter 1", false);
             var completedAssignment = new Assignment("WorkSheet 1", "Do questions 1-12", false);
 
+            // Act
             completedAssignment.MarkComplete();
-
             service.AddAssignment(incompleteAssignment);
             service.AddAssignment(completedAssignment);
 
