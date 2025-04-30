@@ -22,5 +22,19 @@ namespace AssignmentLibrary.Tests
             Assert.NotNull(mockService);
         }
 
+        [Fact]
+        public void SearchAssignmentByTitle_MoqObjectShouldReturnObjectIfTitleFound()
+        {
+            // Arrange
+            var mockService = new Mock<AssignmentService>();
+            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", false));
+
+            // Act
+            var result = mockService.Object.FindAssignmentByTitle("Test Title");
+
+            // Assert
+            Assert.Equal("Test Title", result.Title);
+        }
+
     }
 }
