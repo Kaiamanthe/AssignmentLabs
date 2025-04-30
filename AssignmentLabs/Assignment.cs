@@ -1,4 +1,4 @@
-﻿namespace AssignmentLibrary;
+﻿namespace AssignmentLibrary.Core;
 
 public class Assignment
 {

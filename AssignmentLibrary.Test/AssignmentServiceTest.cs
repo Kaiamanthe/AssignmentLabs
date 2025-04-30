@@ -1,7 +1,7 @@
 ﻿namespace AssignmentManagement.Tests
 {
     using Xunit;
-    using AssignmentLibrary;
+    using AssignmentLibrary.Core;
 
     public class AssignmentServiceTest
     {

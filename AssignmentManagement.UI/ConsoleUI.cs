@@ -1,4 +1,6 @@
-﻿namespace AssignmentLibrary.UI
+﻿using AssignmentLibrary.Core;
+
+namespace AssignmentLibrary.UI
 {
     public class ConsoleUI
     {
