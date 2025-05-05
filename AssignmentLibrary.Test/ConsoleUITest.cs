@@ -64,6 +64,7 @@ namespace AssignmentLibrary.Tests
             // Assert
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
         }
+
         [Fact]
         public void SearchAssignmentByTitle_MoqObjectShouldReturnObjectIfTitleFound()
         {
@@ -78,6 +79,21 @@ namespace AssignmentLibrary.Tests
 
             // Assert
             mockService.Verify(m => m.FindAssignmentByTitle("Test Title"), Times.Once);
+        }
+        [Fact]
+        public void DeleteAssignment_ShouldRemovedMockObject()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+
+            // Act
+            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description"));
+            mockService.Setup(x => x.DeleteAssignment("Test Title")).Returns(true);
+            mockService.Object.DeleteAssignment("Test Title");
+
+            // Assert
+            mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
+            mockService.Verify(m => m.DeleteAssignment("Test Title"), Times.Once);
         }
     }
 }
