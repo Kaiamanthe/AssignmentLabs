@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AssignmentLibrary.Core
 {
-    public class AssignmentService
+    public class AssignmentService : IAssignmentService
     {
         private readonly List<Assignment> assignments = new();
 
@@ -20,6 +20,16 @@ namespace AssignmentLibrary.Core
             assignments.Add(assignment);
             return true;
         }
+        public List<Assignment> ListAll()
+        {
+            return new List<Assignment>(assignments);
+        }
+
+        public List<Assignment> ListIncomplete()
+        {
+            return assignments.Where(a => !a.IsCompleted).ToList();
+        }
+
         public Assignment FindAssignmentByTitle(string title)
         {
             return assignments.FirstOrDefault(a =>
@@ -34,16 +44,16 @@ namespace AssignmentLibrary.Core
             assignment.MarkComplete();
             return true;
         }
-
-        public List<Assignment> ListAll()
+        public bool DeleteAssignment(string title)
         {
-            return new List<Assignment>(assignments);
+            var assignment = FindAssignmentByTitle(title);
+            if (assignment == null)
+                return false;
+
+            assignments.Remove(assignment);
+            return true;
         }
 
-        public List<Assignment> ListIncomplete()
-        {
-            return assignments.Where(a => !a.IsCompleted).ToList();
-        }
         public bool UpdateAssignment(string oldTitle, string newTitle, string newDescription)
         {
             var assignment = FindAssignmentByTitle(oldTitle);
@@ -60,14 +70,10 @@ namespace AssignmentLibrary.Core
             return true;
         }
 
-        public bool DeleteAssignment(string title)
+        public Assignment? FindByTitle(string title)
         {
-            var assignment = FindAssignmentByTitle(title);
-            if (assignment == null)
-                return false;
-
-            assignments.Remove(assignment);
-            return true;
+            return assignments.FirstOrDefault(a => a.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
         }
+
     }
 }
