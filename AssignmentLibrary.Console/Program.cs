@@ -11,7 +11,7 @@ namespace AssignmentLibrary.Console
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<AssignmentService>();
+            services.AddSingleton<IAssignmentService, AssignmentService>();
             services.AddSingleton<ConsoleUI>();
 
             var serviceProvider = services.BuildServiceProvider();
