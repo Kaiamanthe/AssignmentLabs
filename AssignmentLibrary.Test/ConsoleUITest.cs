@@ -61,9 +61,23 @@ namespace AssignmentLibrary.Tests
             mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description"))).Returns(true);
             mockService.Object.AddAssignment(null);
 
-
             // Assert
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
+        }
+        [Fact]
+        public void SearchAssignmentByTitle_MoqObjectShouldReturnObjectIfTitleFound()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", false));
+
+            // Act
+            mockService.Setup(s => s.FindAssignmentByTitle("Test Title"))
+                       .Returns(new Assignment("Test Title", "Test Description", false));
+            mockService.Object.FindAssignmentByTitle("Test Title");
+
+            // Assert
+            mockService.Verify(m => m.FindAssignmentByTitle("Test Title"), Times.Once);
         }
     }
 }
