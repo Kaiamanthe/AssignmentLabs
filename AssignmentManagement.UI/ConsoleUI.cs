@@ -4,9 +4,9 @@ namespace AssignmentLibrary.UI
 {
     public class ConsoleUI
     {
-        private readonly AssignmentService _assignmentService;
+        private readonly IAssignmentService _assignmentService;
 
-        public ConsoleUI(AssignmentService assignmentService)
+        public ConsoleUI(IAssignmentService assignmentService)
         {
             _assignmentService = assignmentService;
         }
@@ -60,7 +60,7 @@ namespace AssignmentLibrary.UI
             }
         }
 
-        private void AddAssignment()
+        public void AddAssignment()
         {
             Console.Write("Enter assignment title: ");
             var title = Console.ReadLine();
