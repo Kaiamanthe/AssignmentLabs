@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using AssignmentLibrary.Api.Services;
-using AssignmentLibrary.Api.Interfaces;
+using AssignmentLibrary.Core;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddSingleton<IWorkService, WorkService>();
+builder.Services.AddSingleton<IAssignmentService, AssignmentService>(); 
 var app = builder.Build();
 
 
