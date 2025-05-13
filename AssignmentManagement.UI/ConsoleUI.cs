@@ -1,4 +1,5 @@
-﻿using AssignmentLibrary.Core;
+﻿using AssignmentLibrary.Core.Models;
+using AssignmentLibrary.Core.Interfaces;
 
 namespace AssignmentLibrary.UI
 {

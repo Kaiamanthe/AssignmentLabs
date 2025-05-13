@@ -1,5 +1,6 @@
 ﻿using AssignmentLibrary.Api.Dtos;
-using AssignmentLibrary.Core;
+using AssignmentLibrary.Core.Models;
+using AssignmentLibrary.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssignmentLibrary.Api.Controllers

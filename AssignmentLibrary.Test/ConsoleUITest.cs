@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AssignmentLibrary.Core;
 using AssignmentLibrary.UI;
+using AssignmentLibrary.Core.Interfaces;
+using AssignmentLibrary.Core.Models;
 
 namespace AssignmentLibrary.Tests
 {

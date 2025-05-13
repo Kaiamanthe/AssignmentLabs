@@ -1,4 +1,4 @@
-﻿namespace AssignmentLibrary.Core;
+﻿namespace AssignmentLibrary.Core.Models;
 
 public class Assignment
 {

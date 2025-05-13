@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using AssignmentLibrary.Core;
+using AssignmentLibrary.Core.Models;
 using System.Reflection;
 
 namespace AssignmentLibrary.Tests;
