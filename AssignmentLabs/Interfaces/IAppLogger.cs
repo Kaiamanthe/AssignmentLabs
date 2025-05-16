@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace AssignmentLibrary.Core.Interfaces
 {
-    internal interface IAppLogger
+    public interface IAppLogger
     {
+        void Log(string message);
     }
 }

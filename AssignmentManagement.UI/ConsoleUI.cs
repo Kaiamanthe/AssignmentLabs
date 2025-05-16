@@ -70,7 +70,7 @@ namespace AssignmentLibrary.UI
 
             try
             {
-                var assignment = new Assignment(title, description);
+                var assignment = new Assignment(title, description, false);
                 if (_assignmentService.AddAssignment(assignment))
                 {
                     Console.WriteLine("Assignment added successfully.");

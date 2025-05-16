@@ -13,6 +13,8 @@ namespace AssignmentLibrary.Console
             var services = new ServiceCollection();
 
             services.AddSingleton<IAssignmentService, AssignmentService>();
+            services.AddSingleton<IAppLogger, ConsoleAppLogger>();
+            services.AddSingleton<IAssignmentFormatter, AssignmentFormatter>();
             services.AddSingleton<ConsoleUI>();
 
             var serviceProvider = services.BuildServiceProvider();

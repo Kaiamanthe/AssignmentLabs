@@ -59,7 +59,7 @@ namespace AssignmentLibrary.Tests
             var mockService = new Mock<IAssignmentService>();
 
             // Act
-            mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description"))).Returns(true);
+            mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description", false))).Returns(true);
             mockService.Object.AddAssignment(null);
 
             // Assert
@@ -88,7 +88,7 @@ namespace AssignmentLibrary.Tests
             var mockService = new Mock<IAssignmentService>();
 
             // Act
-            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description"));
+            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", false));
             mockService.Setup(x => x.DeleteAssignment("Test Title")).Returns(true);
             mockService.Object.DeleteAssignment("Test Title");
 

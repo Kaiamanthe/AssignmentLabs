@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using AssignmentLibrary.Core.Interfaces;
 using AssignmentLibrary.Core.Services;
+using AssignmentLibrary.UI;
 
 
 
@@ -14,7 +15,10 @@ builder.Services.AddSwaggerGen();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddSingleton<IAssignmentService, AssignmentService>(); 
+builder.Services.AddSingleton<IAssignmentService, AssignmentService>();
+builder.Services.AddSingleton<IAppLogger, ConsoleAppLogger>();
+builder.Services.AddSingleton<IAssignmentFormatter, AssignmentFormatter>();
+builder.Services.AddSingleton<ConsoleUI>();
 var app = builder.Build();
 
 

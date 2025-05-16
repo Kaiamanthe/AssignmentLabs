@@ -40,7 +40,7 @@ namespace AssignmentLibrary.Api.Controllers
         {
             try
             {
-                var assignment = new Assignment(dto.Title, dto.Description, dto.IsCompleted);
+                var assignment = new Assignment(dto.Title, dto.Description, dto.IsCompleted = false);
                 var success = _service.AddAssignment(assignment);
                 if (!success)
                     return Conflict("Assignment with this title already exists.");
