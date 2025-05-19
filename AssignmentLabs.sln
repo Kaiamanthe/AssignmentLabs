@@ -5,15 +5,15 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.Core", "AssignmentLabs\AssignmentLibrary.Core.csproj", "{9B529722-9BED-42F7-9F0C-CB6B14D555A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.Test", "AssignmentLibrary.Test\AssignmentLibrary.Test.csproj", "{7FD43ACE-3993-494D-9024-B796B707EFFD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.UI", "AssignmentManagement.UI\AssignmentLibrary.UI.csproj", "{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.Tests", "AssignmentLibrary.Test\AssignmentLibrary.Tests.csproj", "{7FD43ACE-3993-494D-9024-B796B707EFFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.Console", "AssignmentLibrary.Console\AssignmentLibrary.Console.csproj", "{74331130-B529-4711-911A-3593BC2B51B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.Api", "AssignmentLibrary.Api\AssignmentLibrary.Api.csproj", "{86E70038-2398-4EF7-8DA7-C4C4228A43A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentApi.Tests", "AssignmentApi.Tests\AssignmentApi.Tests.csproj", "{D8E4A2A5-AB59-4F5E-B410-5F030A60ECF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLibrary.UI", "AssignmentLibrary.UI\AssignmentLibrary.UI.csproj", "{6C472165-21E6-F938-700F-B909150AC608}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,6 @@ Global
 		{7FD43ACE-3993-494D-9024-B796B707EFFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FD43ACE-3993-494D-9024-B796B707EFFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FD43ACE-3993-494D-9024-B796B707EFFD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64E8A4BA-502E-4F3A-93B5-EDE4E2CD315E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{74331130-B529-4711-911A-3593BC2B51B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{74331130-B529-4711-911A-3593BC2B51B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74331130-B529-4711-911A-3593BC2B51B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{D8E4A2A5-AB59-4F5E-B410-5F030A60ECF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E4A2A5-AB59-4F5E-B410-5F030A60ECF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E4A2A5-AB59-4F5E-B410-5F030A60ECF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C472165-21E6-F938-700F-B909150AC608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C472165-21E6-F938-700F-B909150AC608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C472165-21E6-F938-700F-B909150AC608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C472165-21E6-F938-700F-B909150AC608}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@ using AssignmentLibrary.Core.Interfaces;
 
 namespace AssignmentLibrary.Tests;
 
-public class AssignmentTests
+public class AssignmentLibraryTests
 {
     [Fact]
     public void Constructor_ValidInput_ShouldCreateAssignment()

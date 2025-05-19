@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AssignmentLibrary.UI;
 using AssignmentLibrary.Core.Interfaces;
 using AssignmentLibrary.Core.Models;
+using AssignmentLibrary.Core.Services;
 
 namespace AssignmentLibrary.Tests
 {
@@ -96,5 +97,10 @@ namespace AssignmentLibrary.Tests
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
             mockService.Verify(m => m.DeleteAssignment("Test Title"), Times.Once);
         }
+
+
+        // Formatter Test
+
+
     }
 }

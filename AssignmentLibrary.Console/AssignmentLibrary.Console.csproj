@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AssignmentLabs\AssignmentLibrary.Core.csproj" />
-    <ProjectReference Include="..\AssignmentManagement.UI\AssignmentLibrary.UI.csproj" />
+    <ProjectReference Include="..\AssignmentLibrary.UI\AssignmentLibrary.UI.csproj" />
   </ItemGroup>
 
 </Project>
