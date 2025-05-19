@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AssignmentLibrary.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AssignmentLibrary.Core
+namespace AssignmentLibrary.Core.Interfaces
 {
     public interface IAssignmentService
     {

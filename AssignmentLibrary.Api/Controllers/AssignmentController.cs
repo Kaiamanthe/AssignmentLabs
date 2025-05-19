@@ -1,5 +1,6 @@
 ﻿using AssignmentLibrary.Api.Dtos;
-using AssignmentLibrary.Core;
+using AssignmentLibrary.Core.Models;
+using AssignmentLibrary.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssignmentLibrary.Api.Controllers
@@ -39,7 +40,7 @@ namespace AssignmentLibrary.Api.Controllers
         {
             try
             {
-                var assignment = new Assignment(dto.Title, dto.Description, dto.IsCompleted);
+                var assignment = new Assignment(dto.Title, dto.Description, dto.IsCompleted = false);
                 var success = _service.AddAssignment(assignment);
                 if (!success)
                     return Conflict("Assignment with this title already exists.");

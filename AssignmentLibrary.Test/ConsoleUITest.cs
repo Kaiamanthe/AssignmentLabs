@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AssignmentLibrary.Core;
 using AssignmentLibrary.UI;
+using AssignmentLibrary.Core.Interfaces;
+using AssignmentLibrary.Core.Models;
+using AssignmentLibrary.Core.Services;
 
 namespace AssignmentLibrary.Tests
 {
@@ -58,7 +60,7 @@ namespace AssignmentLibrary.Tests
             var mockService = new Mock<IAssignmentService>();
 
             // Act
-            mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description"))).Returns(true);
+            mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description", false))).Returns(true);
             mockService.Object.AddAssignment(null);
 
             // Assert
@@ -87,7 +89,7 @@ namespace AssignmentLibrary.Tests
             var mockService = new Mock<IAssignmentService>();
 
             // Act
-            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description"));
+            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", false));
             mockService.Setup(x => x.DeleteAssignment("Test Title")).Returns(true);
             mockService.Object.DeleteAssignment("Test Title");
 
@@ -95,5 +97,10 @@ namespace AssignmentLibrary.Tests
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
             mockService.Verify(m => m.DeleteAssignment("Test Title"), Times.Once);
         }
+
+
+        // Formatter Test
+
+
     }
 }

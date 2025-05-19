@@ -1,0 +1,8 @@
+What was different about working with HTTP vs Console input/output?
+	HTTP requires more thinking in a more stateless requests and structured data in the form of JSON. Having to serialize and deserialize to display for the users input and output. It is more different than console input/output. Unlike console input/output you can prepare endpoints to handles request which helps testing responses. 
+
+What challenges did you face using interfaces and injection?
+	The interfaces and dependency injections was rough at first as it restricts the design to revolve around loose coupled components. Passing dependencies between project has it's own hierarchy of sort. As adding a reference is only one way, which requires interfaces and DTOs to make it all work together. Navigating the structure in this manner, makes it so we don't have to use [new] directly in the code.
+
+What benefits did you observe in separating responsibilities?
+	The benefits is that it makes it much easier to substitute mocks and stubs for testing. Separating the responsibilities makes it clearer, more reusable and it also isolate logic while debugging and testing. Separation of responsibilities makes it much easier to work on one component at a time and help with documentation.

@@ -1,21 +1,28 @@
-﻿namespace AssignmentManagement.Tests
+﻿namespace AssignmentLibrary.Tests
 {
+    using AssignmentLibrary.Core.Interfaces;
+    using AssignmentLibrary.Core.Models;
+    using AssignmentLibrary.Core.Services;
+    using AssignmentLibrary.UI;
+    using Moq;
     using Xunit;
-    using AssignmentLibrary.Core;
 
-    public class AssignmentServiceTest
+    public class AssignmentServiceTests
     {
 
         [Fact]
         public void AddAssignment_ShouldAddAssignmentToList()
         {
             // Arrange
-            var service = new AssignmentService();
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
             var assignment = new Assignment("Read Chapter 3", "Answer question 1-8", false);
 
             // Act
             service.AddAssignment(assignment);
-
             var assignments = service.ListAll();
 
             // Assert
@@ -26,7 +33,11 @@
         public void ListAll_ShouldReturnAllAssignments()
         {
             // Arrange
-            var service = new AssignmentService();
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
             var assignment1 = new Assignment("As 1 Read Chapter 1", "Anotate chapter 1", false);
             var assignment2 = new Assignment("Chapter 1 worksheet", "Answer question 1-9", false);
 
@@ -46,7 +57,11 @@
         public void ListIncomplete_ShouldReturnOnlyIncompleteAssignments()
         {
             // Arrange
-            var service = new AssignmentService();
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
             var assignment1 = new Assignment("As 1 Read Chapter 1", "Anotate chapter 1", false);
             var assignment2 = new Assignment("Chapter 1 worksheet", "Answer question 1-9", false);
 
@@ -67,7 +82,11 @@
         public void ListIncomplete_ShouldReturnEmptyList_NoAssignment()
         {
             // Arrange
-            var service = new AssignmentService();
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
 
             // Act
             var incompleteAssignments = service.ListIncomplete();
@@ -80,7 +99,11 @@
         public void ListIncomplete_ShouldReturnOnlyIncomplete_WhenMixofInAndCompleted()
         {
             // Arrange
-            var service = new AssignmentService();
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
             var incompleteAssignment = new Assignment("Chapter 1", "Annotate Chapter 1", false);
             var completedAssignment = new Assignment("WorkSheet 1", "Do questions 1-12", false);
 
@@ -99,8 +122,12 @@
         public void FindAssignmentByTitle_ShouldReturnCorrectAssignment()
         {
             // Arrange
-            var service = new AssignmentService();
-            var assignment = new Assignment("Test Title", "Test Description");
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment = new Assignment("Test Title", "Test Description", false);
             service.AddAssignment(assignment);
 
             // Act
@@ -115,8 +142,12 @@
         public void MarkAssignmentComplete_ShouldMarkAssignmentAsCompleted()
         {
             // Arrange
-            var service = new AssignmentService();
-            var assignment = new Assignment("Test Title", "Test Description");
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment = new Assignment("Test Title", "Test Description", true);
             service.AddAssignment(assignment);
 
             // Act
@@ -131,8 +162,12 @@
         public void DeleteAssignment_ShouldRemoveAssignment()
         {
             // Arrange
-            var service = new AssignmentService();
-            var assignment = new Assignment("Test Title", "Test Description");
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment = new Assignment("Test Title", "Test Description", false);
             service.AddAssignment(assignment);
 
             // Act
@@ -147,16 +182,117 @@
         public void UpdateAssignment_ShouldChangeTitleAndDescription()
         {
             // Arrange
-            var service = new AssignmentService();
-            var assignment = new Assignment("Old Title", "Old Description");
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Mocked Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment = new Assignment("Old Title", "Old Description", false);
             service.AddAssignment(assignment);
 
             // Act
-            assignment.Update("New Title", "New Description");
+            assignment.Update("New Title", "New Description", true);
 
             // Assert
             Assert.Equal("New Title", assignment.Title);
             Assert.Equal("New Description", assignment.Description);
+        }
+
+        [Fact]
+        public void Format_ShouldReturnFormattedString()
+        {
+            // Arrange
+            var assignment = new Assignment("Test Title", "Test Description", false);
+            var formatter = new AssignmentFormatter();
+
+            // Act
+            var result = formatter.Format(assignment);
+
+            // Assert
+            var expected = $"Assignment ID: {assignment.Id}, Title: Test Title, Description: Test Description";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void AddAssignment_MoqShouldCallFormatter()
+        {
+            // Arrange
+
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+
+            var assignment = new Assignment("Test Title", "Test Description", false);
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>()))
+                         .Returns("Formatted Assignment");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+
+            // Act
+
+            service.AddAssignment(assignment);
+
+            // Assert
+
+            mockFormatter.Verify(f => f.Format(It.Is<Assignment>(a => a.Title == "Test Title")), Times.Once);
+
+        }
+
+        [Fact]
+        public void AddAssignment_ShouldCallLogger()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment = new Assignment("Test", "Test Desc", false);
+
+            // Act
+            service.AddAssignment(assignment);
+
+            // Assert
+            mockLogger.Verify(l => l.Log("Added: formatted"), Times.Once);
+        }
+
+        [Fact]
+        public void DeleteAssignment_ShouldCallLogger()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment = new Assignment("Test", "Test Desc", false);
+            service.AddAssignment(assignment);
+
+            // Act
+            service.DeleteAssignment("Test");
+
+            // Assert
+            mockLogger.Verify(l => l.Log("Deleted: formatted"), Times.Once);
+        }
+
+        [Fact]
+        public void Update_ShouldCallLogger()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment = new Assignment("Old Title", "Old Desc", false);
+            service.AddAssignment(assignment);
+
+            mockLogger.Invocations.Clear();
+
+            // Act
+            service.UpdateAssignment("Old Title", "New Title", "New Desc");
+
+            // Assert
+            mockLogger.Verify(l => l.Log("Updated: formatted"), Times.Once);
         }
 
     }

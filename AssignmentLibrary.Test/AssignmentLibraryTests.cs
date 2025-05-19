@@ -1,15 +1,17 @@
 ﻿using Xunit;
-using AssignmentLibrary.Core;
+using Moq;
 using System.Reflection;
+using AssignmentLibrary.Core.Models;
+using AssignmentLibrary.Core.Interfaces;
 
 namespace AssignmentLibrary.Tests;
 
-public class AssignmentTests
+public class AssignmentLibraryTests
 {
     [Fact]
     public void Constructor_ValidInput_ShouldCreateAssignment()
     {
-        var assignment = new Assignment("Read Chapter 2", "Summarize key points");
+        var assignment = new Assignment("Read Chapter 2", "Summarize key points", false);
         Assert.Equal("Read Chapter 2", assignment.Title);
         Assert.Equal("Summarize key points", assignment.Description);
     }
@@ -17,18 +19,18 @@ public class AssignmentTests
     [Fact]
     public void Constructor_BlankTitle_ShouldThrowException()
     {
-        Assert.Throws<ArgumentException>(() => new Assignment("", "Valid description"));
+        Assert.Throws<ArgumentException>(() => new Assignment("", "Valid description", false));
     }
 
     [Fact]
     public void Update_ShouldThrow_IfDescIsBlank()
     {
         //Arrange
-        var assignment = new Assignment("Read Chapter 2", "Summarize Key Points");
+        var assignment = new Assignment("Read Chapter 2", "Summarize Key Points", false);
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            assignment.Update("Read Chapter 3", "")
+            assignment.Update("Read Chapter 3", "", false)
         ); //Looks to see if the description is blank
     }
 
@@ -39,8 +41,5 @@ public class AssignmentTests
         assignment.MarkComplete();
         Assert.True(assignment.IsCompleted);
     }
-
-
-
 
 }

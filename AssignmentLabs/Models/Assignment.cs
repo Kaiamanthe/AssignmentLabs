@@ -1,32 +1,19 @@
-﻿namespace AssignmentLibrary.Core;
+﻿namespace AssignmentLibrary.Core.Models;
 
 public class Assignment
 {
+    public Guid Id { get; } = Guid.NewGuid();
     public string Title { get; private set; }
     public string Description { get; private set; }
-    public bool IsCompleted { get; private set; }
+    public bool IsCompleted { get; private set; } = false;
 
-    public Assignment(string title, string description)
+    public Assignment(string title, string description, bool iscomplete)
     {
-        Validate(title, nameof(title));
-        Validate(description, nameof(description));
 
+        ValHelper(title, description, iscomplete);
         Title = title;
         Description = description;
-        IsCompleted = false;
-    }
-    public Assignment(string title, string description, bool completion)
-    {
-        ValHelper(title, description, completion);
-    }
-    public void Update(string newTitle, string newDescription)
-    {
-        Validate(newTitle, nameof(newTitle));
-        Validate(newDescription, nameof(newDescription));
 
-        Title = newTitle;
-        Description = newDescription;
-        IsCompleted = false;
     }
 
     public void Update(string newTitle, string newDescription, bool newcompletion)
