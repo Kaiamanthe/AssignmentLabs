@@ -8,6 +8,7 @@ using AssignmentLibrary.UI;
 using AssignmentLibrary.Core.Interfaces;
 using AssignmentLibrary.Core.Models;
 using AssignmentLibrary.Core.Services;
+using AssignmentLibrary.Core;
 
 namespace AssignmentLibrary.Tests
 {
@@ -60,7 +61,7 @@ namespace AssignmentLibrary.Tests
             var mockService = new Mock<IAssignmentService>();
 
             // Act
-            mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description", false))).Returns(true);
+            mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description", false, Priority.Medium))).Returns(true);
             mockService.Object.AddAssignment(null);
 
             // Assert

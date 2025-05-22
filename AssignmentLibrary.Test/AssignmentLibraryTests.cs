@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using Moq;
 using System.Reflection;
+using AssignmentLibrary.Core;
 using AssignmentLibrary.Core.Models;
 using AssignmentLibrary.Core.Interfaces;
 
@@ -26,11 +27,11 @@ public class AssignmentLibraryTests
     public void Update_ShouldThrow_IfDescIsBlank()
     {
         //Arrange
-        var assignment = new Assignment("Read Chapter 2", "Summarize Key Points", false);
+        var assignment = new Assignment("Read Chapter 2", "Summarize Key Points", false, Priority.Medium);
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            assignment.Update("Read Chapter 3", "", false)
+            assignment.Update("Read Chapter 3", "", false, Priority.Medium)
         ); //Looks to see if the description is blank
     }
 

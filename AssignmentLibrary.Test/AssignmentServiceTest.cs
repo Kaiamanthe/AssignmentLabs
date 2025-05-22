@@ -1,5 +1,6 @@
 ﻿namespace AssignmentLibrary.Tests
 {
+    using AssignmentLibrary.Core;
     using AssignmentLibrary.Core.Interfaces;
     using AssignmentLibrary.Core.Models;
     using AssignmentLibrary.Core.Services;
@@ -191,7 +192,7 @@
             service.AddAssignment(assignment);
 
             // Act
-            assignment.Update("New Title", "New Description", true);
+            assignment.Update("New Title", "New Description", true, Priority.Medium);
 
             // Assert
             Assert.Equal("New Title", assignment.Title);
@@ -289,7 +290,7 @@
             mockLogger.Invocations.Clear();
 
             // Act
-            service.UpdateAssignment("Old Title", "New Title", "New Desc");
+            service.UpdateAssignment("Old Title", "New Title", "New Desc", Priority.Medium);
 
             // Assert
             mockLogger.Verify(l => l.Log("Updated: formatted"), Times.Once);
