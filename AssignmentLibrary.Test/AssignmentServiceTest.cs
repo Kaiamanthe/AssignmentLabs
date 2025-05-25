@@ -290,7 +290,7 @@
             mockLogger.Invocations.Clear();
 
             // Act
-            service.UpdateAssignment("Old Title", "New Title", "New Desc", Priority.Medium);
+            service.UpdateAssignment("Old Title", "New Title", "New Desc", false, Priority.Medium);
 
             // Assert
             mockLogger.Verify(l => l.Log("Updated: formatted"), Times.Once);

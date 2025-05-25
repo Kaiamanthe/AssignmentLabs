@@ -87,7 +87,7 @@ namespace AssignmentLibrary.Core.Services
         }
 
 
-        public bool UpdateAssignment(string oldTitle, string newTitle, string newDescription, Priority priority)
+        public bool UpdateAssignment(string oldTitle, string newTitle, string newDescription, bool isComplete, Priority priority)
         {
             var assignment = FindAssignmentByTitle(oldTitle);
             if (assignment == null)
@@ -95,7 +95,7 @@ namespace AssignmentLibrary.Core.Services
 
             try
             {
-                assignment.Update(newTitle, newDescription, false, priority);
+                assignment.Update(newTitle, newDescription, isComplete, priority);
                 _logger.Log($"Updated: {_formatter.Format(assignment)}");
                 return true;
             }

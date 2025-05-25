@@ -3,30 +3,31 @@
 public class Assignment
 {
     public Guid Id { get; } = Guid.NewGuid();
-    public string Title { get; private set; }
-    public string Description { get; private set; }
-    public bool IsCompleted { get; private set; } = false;
+    public string Title { get; private set; } = default!;
+    public string Description { get; private set; } = default!;
+    public bool IsCompleted { get; private set; }
     public Priority Priority { get; private set; }
-    
 
-    public Assignment(string title, string description, bool iscomplete, Priority priority = Priority.Medium)
+
+    public Assignment(string title, string description, bool isCompleted = false, Priority priority = Priority.Medium)
     {
-
-        ValHelper(title, description, iscomplete);
+        ValHelper(title, description);
         Title = title;
         Description = description;
+        IsCompleted = isCompleted;
         Priority = priority;
-
     }
+
 
     public void Update(string newTitle, string newDescription, bool newcompletion, Priority priority)
     {
-        ValHelper(newTitle, newDescription, newcompletion);
-
+        ValHelper(newTitle, newDescription);
         Title = newTitle;
         Description = newDescription;
         IsCompleted = newcompletion;
+        Priority = priority;
     }
+
     public bool UpdatePriority(Priority newPriority)
     {
         if (Priority == newPriority)
@@ -41,16 +42,10 @@ public class Assignment
             throw new ArgumentException($"{fieldName} cannot be blank or whitespace.");
     }
 
-    private void ValHelper(string TitleField, string DescriptionField, bool IsCompletedField)
+    private void ValHelper(string titleField, string descriptionField)
     {
-        Validate(TitleField, nameof(Title));
-        Validate(DescriptionField, nameof(Description));
-        Validate(IsCompletedField.ToString(), nameof(IsCompleted));
-
-
-        Title = TitleField;
-        Description = DescriptionField;
-        IsCompleted = IsCompletedField;
+        Validate(titleField, nameof(Title));
+        Validate(descriptionField, nameof(Description));
     }
 
     public void MarkComplete()

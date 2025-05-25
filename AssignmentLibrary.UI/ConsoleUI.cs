@@ -115,7 +115,7 @@ namespace AssignmentLibrary.UI
 
             foreach (var assignment in assignments)
             {
-                Console.WriteLine($"- {assignment.Title}: {assignment.Description} (Completed: {assignment.IsCompleted})");
+                Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description} Priority: {assignment.Priority} (Completed: {assignment.IsCompleted})");
             }
         }
         private void ListIncompleteAssignments()
@@ -129,7 +129,7 @@ namespace AssignmentLibrary.UI
 
             foreach (var assignment in assignments)
             {
-                Console.WriteLine($"- {assignment.Title}: {assignment.Description} (Completed: {assignment.IsCompleted})");
+                Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description} Priority: {assignment.Priority} (Completed: {assignment.IsCompleted})");
             }
         }
         private void ListAssignmentsByPriority()
@@ -143,7 +143,7 @@ namespace AssignmentLibrary.UI
 
             foreach (var assignment in assignments)
             {
-                Console.WriteLine($"Priority: {assignment.Priority.ToString()} - {assignment.Title}: {assignment.Description}");
+                Console.WriteLine($"Priority: {assignment.Priority.ToString()} - Assignment: {assignment.Title} Description: {assignment.Description} (Completed: {assignment.IsCompleted})");
             }
         }
         private void MarkAssignmentComplete()
@@ -171,24 +171,35 @@ namespace AssignmentLibrary.UI
             }
             else
             {
-                Console.WriteLine($"Found: {assignment.Title}: {assignment.Description} (Completed: {assignment.IsCompleted})");
+                Console.WriteLine($"Priority: {assignment.Priority.ToString()} - Assignment: {assignment.Title} Description: {assignment.Description} (Completed: {assignment.IsCompleted})");
             }
         }
         private void UpdateAssignment()
         {
             Console.WriteLine("Enter the title of the assignment to update:");
             var oldTitle = Console.ReadLine();
-            Console.Write("Enter new title: ");
+
+            Console.WriteLine("Enter new title:");
             var newTitle = Console.ReadLine();
-            Console.Write("Enter new description: ");
+
+            Console.WriteLine("Enter new description:");
             var newDescription = Console.ReadLine();
+
+            Console.WriteLine("Is the assignment complete?: (T)rue or (F)alse");
+            string completetionString = Console.ReadLine();
+            bool isCompleted = false;
+            if (completetionString?.ToUpper() == "T" || completetionString?.ToUpper() == "TRUE")
+            {
+                isCompleted = true;
+            }
+
             Console.WriteLine("Enter Priority: (L)ow, (M)edium, or (H)igh");
             var priorityInput = Console.ReadLine()?.ToUpper();
 
             try
             {
                 Priority priority = ConvertToPriority(priorityInput);
-                if (_assignmentService.UpdateAssignment(oldTitle, newTitle, newDescription, priority))
+                if (_assignmentService.UpdateAssignment(oldTitle, newTitle, newDescription, isCompleted, priority))
                 {
                     Console.WriteLine("Assignment updated successfully.");
                 }
@@ -202,6 +213,7 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("Error: Invalid input. Please try again.");
             }
         }
+
         private void DeleteAssignment()
         {
             Console.Write("Enter the title of the assignment to delete: ");

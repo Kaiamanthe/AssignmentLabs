@@ -1,5 +1,4 @@
-﻿using AssignmentLibrary.Api.Dtos;
-using AssignmentLibrary.Core.Models;
+﻿using AssignmentLibrary.Core.Models;
 using AssignmentLibrary.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,15 +35,15 @@ namespace AssignmentLibrary.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] AssignmentDto dto)
+        public IActionResult Create(Assignment _assignment)
         {
             try
             {
-                var assignment = new Assignment(dto.Title, dto.Description, dto.IsCompleted = false);
-                var success = _service.AddAssignment(assignment);
+                var assignment = new Assignment(_assignment.Title, _assignment.Description, false);
+                var success = _service.AddAssignment(_assignment);
                 if (!success)
                     return Conflict("Assignment with this title already exists.");
-                return CreatedAtAction(nameof(GetByTitle), new { title = assignment.Title }, assignment);
+                return CreatedAtAction(nameof(GetByTitle), new { title = _assignment.Title }, _assignment);
             }
             catch (ArgumentException ex)
             {
@@ -53,11 +52,11 @@ namespace AssignmentLibrary.Api.Controllers
         }
 
         [HttpPut("{title}")]
-        public IActionResult Update(string title, [FromBody] AssignmentDto dto)
+        public IActionResult Update(string title, Assignment _assignment)
         {
             try
             {
-                var updated = _service.UpdateAssignment(title, dto.Title, dto.Description);
+                var updated = _service.UpdateAssignment(title, _assignment.Title, _assignment.Description, _assignment.IsCompleted, _assignment.Priority);
                 return updated ? NoContent() : NotFound();
             }
             catch (ArgumentException ex)
@@ -70,7 +69,10 @@ namespace AssignmentLibrary.Api.Controllers
         public IActionResult MarkComplete(string title)
         {
             var success = _service.MarkAssignmentComplete(title);
-            return success ? NoContent() : NotFound();
+            if (!success) return NotFound();
+
+            var assignment = _service.FindByTitle(title);
+            return Ok(assignment);
         }
 
         [HttpDelete("{title}")]
