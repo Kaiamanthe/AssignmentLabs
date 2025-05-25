@@ -1,5 +1,6 @@
-﻿using AssignmentLibrary.Core.Models;
+﻿using AssignmentLibrary.Core;
 using AssignmentLibrary.Core.Interfaces;
+using AssignmentLibrary.Core.Models;
 
 namespace AssignmentLibrary.UI
 {
@@ -20,10 +21,11 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("1. Add Assignment");
                 Console.WriteLine("2. List All Assignments");
                 Console.WriteLine("3. List Incomplete Assignments");
-                Console.WriteLine("4. Mark Assignment as Complete");
-                Console.WriteLine("5. Search Assignment by Title");
-                Console.WriteLine("6. Update Assignment");
-                Console.WriteLine("7. Delete Assignment");
+                Console.WriteLine("4. List Assignments By Priority");
+                Console.WriteLine("5. Mark Assignment as Complete");
+                Console.WriteLine("6. Search Assignment by Title");
+                Console.WriteLine("7. Update Assignment");
+                Console.WriteLine("8. Delete Assignment");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choose an option: ");
                 var input = Console.ReadLine();
@@ -40,15 +42,18 @@ namespace AssignmentLibrary.UI
                         ListIncompleteAssignments();
                         break;
                     case "4":
-                        MarkAssignmentComplete();
+                        ListAssignmentsByPriority();
                         break;
                     case "5":
-                        SearchAssignmentByTitle();
+                        MarkAssignmentComplete();
                         break;
                     case "6":
-                        UpdateAssignment();
+                        SearchAssignmentByTitle();
                         break;
                     case "7":
+                        UpdateAssignment();
+                        break;
+                    case "8":
                         DeleteAssignment();
                         break;
                     case "0":
@@ -60,17 +65,31 @@ namespace AssignmentLibrary.UI
                 }
             }
         }
-
-        public void AddAssignment()
+        
+        private Priority ConvertToPriority(string priorityInput)
         {
-            Console.Write("Enter assignment title: ");
+            return priorityInput switch
+            {
+                "L" => Priority.Low,
+                "M" => Priority.Medium,
+                "H" => Priority.High,
+                _ => throw new ArgumentException("Invalid priority input. Use L, M, or H.")
+            };
+        }
+        private void AddAssignment()
+        {
+            Console.WriteLine("Enter assignment title: ");
             var title = Console.ReadLine();
-            Console.Write("Enter assignment description: ");
+            Console.WriteLine("Enter assignment description: ");
             var description = Console.ReadLine();
+            Console.WriteLine("Enter Priority: (L)ow, (M)edium, or (H)igh");
+            var priorityInput = Console.ReadLine()?.ToUpper();
 
             try
             {
-                var assignment = new Assignment(title, description, false);
+                Priority priority = ConvertToPriority(priorityInput);
+
+                var assignment = new Assignment(title, description, false, priority);
                 if (_assignmentService.AddAssignment(assignment))
                 {
                     Console.WriteLine("Assignment added successfully.");
@@ -85,7 +104,6 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
-
         private void ListAllAssignments()
         {
             var assignments = _assignmentService.ListAll();
@@ -97,10 +115,9 @@ namespace AssignmentLibrary.UI
 
             foreach (var assignment in assignments)
             {
-                Console.WriteLine($"- {assignment.Title}: {assignment.Description} (Completed: {assignment.IsCompleted})");
+                Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description} Priority: {assignment.Priority} (Completed: {assignment.IsCompleted})");
             }
         }
-
         private void ListIncompleteAssignments()
         {
             var assignments = _assignmentService.ListIncomplete();
@@ -112,10 +129,23 @@ namespace AssignmentLibrary.UI
 
             foreach (var assignment in assignments)
             {
-                Console.WriteLine($"- {assignment.Title}: {assignment.Description} (Completed: {assignment.IsCompleted})");
+                Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description} Priority: {assignment.Priority} (Completed: {assignment.IsCompleted})");
             }
         }
+        private void ListAssignmentsByPriority()
+        {
+            var assignments = _assignmentService.ListAssignmentsByPriority();
+            if (assignments.Count == 0)
+            {
+                Console.WriteLine("No assignments found.");
+                return;
+            }
 
+            foreach (var assignment in assignments)
+            {
+                Console.WriteLine($"Priority: {assignment.Priority.ToString()} - Assignment: {assignment.Title} Description: {assignment.Description} (Completed: {assignment.IsCompleted})");
+            }
+        }
         private void MarkAssignmentComplete()
         {
             Console.Write("Enter the title of the assignment to mark complete: ");
@@ -129,7 +159,6 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("Assignment not found.");
             }
         }
-
         private void SearchAssignmentByTitle()
         {
             Console.Write("Enter the title to search: ");
@@ -142,26 +171,46 @@ namespace AssignmentLibrary.UI
             }
             else
             {
-                Console.WriteLine($"Found: {assignment.Title}: {assignment.Description} (Completed: {assignment.IsCompleted})");
+                Console.WriteLine($"Priority: {assignment.Priority.ToString()} - Assignment: {assignment.Title} Description: {assignment.Description} (Completed: {assignment.IsCompleted})");
             }
         }
-
         private void UpdateAssignment()
         {
-            Console.Write("Enter the current title of the assignment: ");
+            Console.WriteLine("Enter the title of the assignment to update:");
             var oldTitle = Console.ReadLine();
-            Console.Write("Enter the new title: ");
+
+            Console.WriteLine("Enter new title:");
             var newTitle = Console.ReadLine();
-            Console.Write("Enter the new description: ");
+
+            Console.WriteLine("Enter new description:");
             var newDescription = Console.ReadLine();
 
-            if (_assignmentService.UpdateAssignment(oldTitle, newTitle, newDescription))
+            Console.WriteLine("Is the assignment complete?: (T)rue or (F)alse");
+            string completetionString = Console.ReadLine();
+            bool isCompleted = false;
+            if (completetionString?.ToUpper() == "T" || completetionString?.ToUpper() == "TRUE")
             {
-                Console.WriteLine("Assignment updated successfully.");
+                isCompleted = true;
             }
-            else
+
+            Console.WriteLine("Enter Priority: (L)ow, (M)edium, or (H)igh");
+            var priorityInput = Console.ReadLine()?.ToUpper();
+
+            try
             {
-                Console.WriteLine("Update failed. Title may conflict or assignment not found.");
+                Priority priority = ConvertToPriority(priorityInput);
+                if (_assignmentService.UpdateAssignment(oldTitle, newTitle, newDescription, isCompleted, priority))
+                {
+                    Console.WriteLine("Assignment updated successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Assignment not found or update failed.");
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Error: Invalid input. Please try again.");
             }
         }
 

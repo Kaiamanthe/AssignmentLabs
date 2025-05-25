@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using Moq;
 using System.Reflection;
+using AssignmentLibrary.Core;
 using AssignmentLibrary.Core.Models;
 using AssignmentLibrary.Core.Interfaces;
 
@@ -26,12 +27,12 @@ public class AssignmentLibraryTests
     public void Update_ShouldThrow_IfDescIsBlank()
     {
         //Arrange
-        var assignment = new Assignment("Read Chapter 2", "Summarize Key Points", false);
+        var assignment = new Assignment("Read Chapter 2", "Summarize Key Points", false, Priority.Medium);
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            assignment.Update("Read Chapter 3", "", false)
-        ); //Looks to see if the description is blank
+            assignment.Update("Read Chapter 3", "", false, Priority.Medium)
+        );
     }
 
     [Fact]
@@ -42,4 +43,23 @@ public class AssignmentLibraryTests
         Assert.True(assignment.IsCompleted);
     }
 
+    [Fact]
+    public void Assignment_HasDefaultPriority()
+    {
+        // Arrange
+        var assignment = new Assignment("Task 1", "Details", false);
+
+        // Assert
+        Assert.Equal(Priority.Medium, assignment.Priority);
+    }
+
+    [Fact]
+    public void Assignment_AcceptsHighPriority()
+    {
+        // Arrange
+        var assignment = new Assignment("Urgent Task", "Do it now", false);
+
+        // Assert
+        Assert.Equal(Priority.Medium, assignment.Priority);
+    }
 }

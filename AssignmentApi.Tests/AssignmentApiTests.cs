@@ -2,8 +2,8 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using AssignmentLibrary.Api.Dtos;
 using AssignmentLibrary.Core;
+using AssignmentLibrary.Core.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -22,11 +22,12 @@ namespace AssignmentManagement.ApiTests
         public async Task Can_Create_Assignment()
         {
             // Arrange
-            var assignment = new AssignmentDto
+            var assignment = new
             {
-                Title = "Integration Test Assignment",
-                Description = "Created during test",
-                IsCompleted = false
+                title = "Integration Test Assignment",
+                description = "Created during test",
+                isCompleted = false,
+                priority = "Medium"
             };
 
             // Act
@@ -47,13 +48,18 @@ namespace AssignmentManagement.ApiTests
             Assert.True(response.IsSuccessStatusCode);
 
             var content = await response.Content.ReadAsStringAsync();
-            var assignments = JsonSerializer.Deserialize<List<AssignmentDto>>(content, new JsonSerializerOptions
+            var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
+            };
+            options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+
+            var assignments = JsonSerializer.Deserialize<List<Assignment>>(content, options);
 
             Assert.NotNull(assignments);
             Assert.Contains(assignments, a => a.Title == "Integration Test Assignment");
         }
+
+
     }
 }

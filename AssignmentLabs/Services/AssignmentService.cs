@@ -44,6 +44,10 @@ namespace AssignmentLibrary.Core.Services
             _logger.Log("Retrieved all incomplete assignment.");
             return assignments.Where(a => !a.IsCompleted).ToList();
         }
+        public List<Assignment> ListAssignmentsByPriority()
+        {
+            return assignments.OrderByDescending(a => a.Priority).ThenByDescending(a => !a.IsCompleted).ToList();
+        }
 
         public Assignment FindAssignmentByTitle(string title)
         {
@@ -83,27 +87,22 @@ namespace AssignmentLibrary.Core.Services
         }
 
 
-        public bool UpdateAssignment(string oldTitle, string newTitle, string newDescription)
+        public bool UpdateAssignment(string oldTitle, string newTitle, string newDescription, bool isComplete, Priority priority)
         {
             var assignment = FindAssignmentByTitle(oldTitle);
             if (assignment == null)
+                return false;
+
+            try
             {
-                _logger.Log($"Update failed: '{oldTitle}' not found.");
+                assignment.Update(newTitle, newDescription, isComplete, priority);
+                _logger.Log($"Updated: {_formatter.Format(assignment)}");
+                return true;
+            }
+            catch (ArgumentException)
+            {
                 return false;
             }
-
-            if (!oldTitle.Equals(newTitle, StringComparison.OrdinalIgnoreCase) &&
-                assignments.Any(a => a.Title.Equals(newTitle, StringComparison.OrdinalIgnoreCase)))
-            {
-                _logger.Log($"Update failed: new title '{newTitle}' conflicts with existing assignment.");
-                return false;
-            }
-
-            bool isCompleted = assignment.IsCompleted;
-
-            assignment.Update(newTitle, newDescription, isCompleted);
-            _logger.Log($"Updated: {_formatter.Format(assignment)}");
-            return true;
         }
 
         public Assignment? FindByTitle(string title)
