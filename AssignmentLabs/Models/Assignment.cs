@@ -25,7 +25,7 @@ public class Assignment
     }
 
 
-    public void Update(string newTitle, string notes, string newDescription, bool newCompletion, Priority priority)
+    public void Update(string newTitle,  string newDescription, string notes, bool newCompletion, Priority priority)
     {
         ValHelper(newTitle, newDescription);
         Title = newTitle;

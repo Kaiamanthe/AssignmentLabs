@@ -26,14 +26,15 @@ public class AssignmentLibraryTests
     [Fact]
     public void Update_ShouldThrow_IfDescIsBlank()
     {
-        //Arrange
+        // Arrange
         var assignment = new Assignment("Read Chapter 2", "Summarize Key Points", "Test Notes", false, Priority.Medium);
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            assignment.Update("Read Chapter 3", "", "Noted", false, Priority.Medium)
+            assignment.Update("Read Chapter 3", "", "Some Notes", false, Priority.Medium)
         );
     }
+
 
     [Fact]
     public void MarkComplete_SetsIsCompletedToTrue()

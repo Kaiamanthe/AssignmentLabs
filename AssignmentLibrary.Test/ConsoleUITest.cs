@@ -99,6 +99,60 @@ namespace AssignmentLibrary.Tests
             mockService.Verify(m => m.DeleteAssignment("Test Title"), Times.Once);
         }
 
+        [Fact]
+        public void AddNoteToAssignment_ShouldUpdateNote_WhenNoteIsEmpty()
+        {
+            // Arrange
+            var assignment = new Assignment("Test Assignment", "Desc", "", false, Priority.Medium);
+
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.FindAssignmentByTitle("Test Assignment")).Returns(assignment);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            // Simulate user input: title, then new note
+            var input = new StringReader("Test Assignment\nNew test note\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI)
+                .GetMethod("AddNoteToAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method.Invoke(ui, null);
+
+            // Assert
+            Assert.Equal("New test note", assignment.Notes);
+            Assert.Contains("Note updated - Assignment: Test Assignment", output.ToString());
+        }
+
+        [Fact]
+        public void AddNoteToAssignment_ShouldProduceConsoleOutput()
+        {
+            // Arrange
+            var assignment = new Assignment("Test Assignment", "Desc", "", false, Priority.Medium);
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.FindAssignmentByTitle("Test Assignment")).Returns(assignment);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Test Assignment\nSome test note content\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI)
+                .GetMethod("AddNoteToAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method.Invoke(ui, null);
+
+            // Assert
+            var consoleOutput = output.ToString();
+            Assert.False(string.IsNullOrWhiteSpace(consoleOutput), "Console output should not be empty.");
+            Assert.Contains("Assignment: Test Assignment", consoleOutput);
+        }
 
 
     }

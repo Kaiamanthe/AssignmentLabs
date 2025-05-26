@@ -51,6 +51,18 @@ namespace AssignmentLibrary.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPatch("{title}/note")]
+        public IActionResult AddNoteToAssignment(string title, [FromBody] string note)
+        {
+            var assignment = _service.FindAssignmentByTitle(title);
+            if (assignment == null)
+            {
+                return NotFound("Assignment not found.");
+            }
+
+            assignment.Notes = note ?? string.Empty;
+            return Ok("Note added or updated successfully.");
+        }
 
         [HttpPut("{title}")]
         public IActionResult Update(string title, AssignmentDto dto)
