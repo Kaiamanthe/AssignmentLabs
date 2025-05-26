@@ -28,6 +28,13 @@ namespace AssignmentLibrary.Api.Controllers
             return Ok(_service.ListIncomplete());
         }
 
+        [HttpGet("by-priority")]
+        public IActionResult GetByPriority()
+        {
+            var sorted = _service.ListAssignmentsByPriority();
+            return Ok(sorted);
+        }
+
         [HttpGet("{title}")]
         public IActionResult GetByTitle(string title)
         {
@@ -40,7 +47,7 @@ namespace AssignmentLibrary.Api.Controllers
         {
             try
             {
-                var assignmentdto = new Assignment(dto.Title, dto.Description, dto.Notes, false);
+                var assignmentdto = new Assignment(dto.Title, dto.Description, dto.Notes, dto.IsCompleted, dto.Priority);
                 var success = _service.AddAssignment(assignmentdto);
                 if (!success)
                     return Conflict("Assignment with this title already exists.");
@@ -50,18 +57,6 @@ namespace AssignmentLibrary.Api.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }
-        [HttpPatch("{title}/note")]
-        public IActionResult AddNoteToAssignment(string title, [FromBody] string note)
-        {
-            var assignment = _service.FindAssignmentByTitle(title);
-            if (assignment == null)
-            {
-                return NotFound("Assignment not found.");
-            }
-
-            assignment.Notes = note ?? string.Empty;
-            return Ok("Note added or updated successfully.");
         }
 
         [HttpPut("{title}")]
@@ -77,6 +72,20 @@ namespace AssignmentLibrary.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPatch("{title}/note")]
+        public IActionResult AddNoteToAssignment(string title, [FromBody] string note)
+        {
+            var assignment = _service.FindAssignmentByTitle(title);
+            if (assignment == null)
+            {
+                return NotFound("Assignment not found.");
+            }
+
+            assignment.Notes = note ?? string.Empty;
+            return Ok("Note added or updated successfully.");
+        }
+
 
         [HttpPatch("{title}/complete")]
         public IActionResult MarkComplete(string title)

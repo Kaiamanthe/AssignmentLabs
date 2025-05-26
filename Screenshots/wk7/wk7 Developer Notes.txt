@@ -1,0 +1,22 @@
+Student Name: Khai Ha
+Date Submitted: 05/25/2025
+
+---
+PURPOSE OF CHANGE:
+Implemented the notes field, then updated the add assignment. If there is no need for a note, the user is inform to press enter to leave it blank. Then update ask prompts the same, informing the user to press enter to leave notes blank. We added a Add note method, inserting it below add assignment. It will look up by title, if there is already a note it will ask if the user wants to update. If it doesn't then it will prompt to add a note. The choice to make an add note as a new option/method is because notes is optional, hence it will be blank unless the user want to add a note.
+
+---
+SUMMARY OF CHANGES:
+Turns out I had missing end points test in the AssignmentApiTest. ListIncom, AssignmentByTitle, Update, ListByPriority and delete were missing. So we added those. Whenever we add a new property many corners of the program needed to be re-examine to make sure everything works properly.
+
+---
+TDD PROCESS USED:
+After the implementation of priority from the guided code, then the code were written. Then because I forgot to implement the test for ListByPriority, then AddNotes to the API. The test were written firs there. So the test for ListByPriority and AddNotes in the api are the ones that followed TDD development.
+
+---
+CHALLENGES OR DESIGN DECISIONS:
+To what used specifically, for a moment I wasn't using a dto and just directly called to the assignment. After more development, it was apparent it was necessary. I switch to directly pathing to Assignment.cs because the need for a dto is not always. For a while as I was developing priority it became more of a hinderance which lead it to be removed and path to Assignment.cs. Then when it came to the notes, that was when it was reintroduce to make the code work as intended.
+
+---
+NEXT STEPS OR RECOMMENDATIONS:
+I want to separate more purpose in the code. For example when you're updating things, you might just want to update notes, or priority specifically. Which priority, and notes are separate from the main requirements of having a title and desc. So I believe in the future I can add a update priority specifically as a separate path for ConsoleUI, and API. Then more TDD oriented, I believe going back and writing the test I miss was more of a refactor rather than TDD. So in reality only 40% of the implementation of priority, and notes was TDD.
