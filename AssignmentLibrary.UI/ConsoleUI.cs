@@ -19,13 +19,14 @@ namespace AssignmentLibrary.UI
             {
                 Console.WriteLine("\nAssignment Manager Menu:");
                 Console.WriteLine("1. Add Assignment");
-                Console.WriteLine("2. List All Assignments");
-                Console.WriteLine("3. List Incomplete Assignments");
-                Console.WriteLine("4. List Assignments By Priority");
-                Console.WriteLine("5. Mark Assignment as Complete");
-                Console.WriteLine("6. Search Assignment by Title");
-                Console.WriteLine("7. Update Assignment");
-                Console.WriteLine("8. Delete Assignment");
+                Console.WriteLine("2. Add Notes to Assignment");
+                Console.WriteLine("3. List All Assignments");
+                Console.WriteLine("4. List Incomplete Assignments");
+                Console.WriteLine("5. List Assignments By Priority");
+                Console.WriteLine("6. Mark Assignment as Complete");
+                Console.WriteLine("7. Search Assignment by Title");
+                Console.WriteLine("8. Update Assignment");
+                Console.WriteLine("9. Delete Assignment");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choose an option: ");
                 var input = Console.ReadLine();
@@ -36,24 +37,27 @@ namespace AssignmentLibrary.UI
                         AddAssignment();
                         break;
                     case "2":
-                        ListAllAssignments();
+                        AddNoteToAssignment();
                         break;
                     case "3":
-                        ListIncompleteAssignments();
+                        ListAllAssignments();
                         break;
                     case "4":
-                        ListAssignmentsByPriority();
+                        ListIncompleteAssignments();
                         break;
                     case "5":
-                        MarkAssignmentComplete();
+                        ListAssignmentsByPriority();
                         break;
                     case "6":
-                        SearchAssignmentByTitle();
+                        MarkAssignmentComplete();
                         break;
                     case "7":
-                        UpdateAssignment();
+                        SearchAssignmentByTitle();
                         break;
                     case "8":
+                        UpdateAssignment();
+                        break;
+                    case "9":
                         DeleteAssignment();
                         break;
                     case "0":
@@ -63,6 +67,7 @@ namespace AssignmentLibrary.UI
                         Console.WriteLine("Invalid choice. Try again.");
                         break;
                 }
+
             }
         }
         
@@ -105,6 +110,36 @@ namespace AssignmentLibrary.UI
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
+        }
+        private void AddNoteToAssignment()
+        {
+            Console.Write("What assignment do you want to add a note to? (Enter assignment title): ");
+            var title = Console.ReadLine();
+
+            var assignment = _assignmentService.FindAssignmentByTitle(title);
+            if (assignment == null)
+            {
+                Console.WriteLine("No assignment found with that title. Returning to main menu.");
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(assignment.Notes))
+            {
+                Console.Write("There's already a note in the assignment. Update the note? (Y/N): ");
+                var response = Console.ReadLine()?.Trim().ToUpper();
+
+                if (response != "Y")
+                {
+                    Console.WriteLine("Note not updated. Returning to main menu.");
+                    return;
+                }
+            }
+
+            Console.Write("Enter the note content: ");
+            var newNote = Console.ReadLine() ?? string.Empty;
+
+            assignment.Update(assignment.Title, assignment.Description, newNote, assignment.IsCompleted, assignment.Priority);
+            Console.WriteLine($"Note updated - Assignment: {assignment.Title} Description: {assignment.Description}{(string.IsNullOrWhiteSpace(assignment.Notes) ? "" : $" | Notes: {assignment.Notes}")} | Priority: {assignment.Priority} | Completed: {assignment.IsCompleted}");
         }
         private void ListAllAssignments()
         {
