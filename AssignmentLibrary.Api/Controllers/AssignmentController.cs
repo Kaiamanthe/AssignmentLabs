@@ -1,5 +1,6 @@
-﻿using AssignmentLibrary.Core.Models;
+﻿using AssignmentLibrary.Api.Models;
 using AssignmentLibrary.Core.Interfaces;
+using AssignmentLibrary.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssignmentLibrary.Api.Controllers
@@ -35,15 +36,15 @@ namespace AssignmentLibrary.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Assignment _assignment)
+        public IActionResult Create(AssignmentDto dto)
         {
             try
             {
-                var assignment = new Assignment(_assignment.Title, _assignment.Description, false);
-                var success = _service.AddAssignment(_assignment);
+                var assignmentdto = new Assignment(dto.Title, dto.Description, dto.Notes, false);
+                var success = _service.AddAssignment(assignmentdto);
                 if (!success)
                     return Conflict("Assignment with this title already exists.");
-                return CreatedAtAction(nameof(GetByTitle), new { title = _assignment.Title }, _assignment);
+                return CreatedAtAction(nameof(GetByTitle), new { title = dto.Title }, dto);
             }
             catch (ArgumentException ex)
             {
@@ -52,11 +53,11 @@ namespace AssignmentLibrary.Api.Controllers
         }
 
         [HttpPut("{title}")]
-        public IActionResult Update(string title, Assignment _assignment)
+        public IActionResult Update(string title, AssignmentDto dto)
         {
             try
             {
-                var updated = _service.UpdateAssignment(title, _assignment.Title, _assignment.Description, _assignment.IsCompleted, _assignment.Priority);
+                var updated = _service.UpdateAssignment(title, dto.Title, dto.Description, dto.Notes, dto.IsCompleted, dto.Priority);
                 return updated ? NoContent() : NotFound();
             }
             catch (ArgumentException ex)
