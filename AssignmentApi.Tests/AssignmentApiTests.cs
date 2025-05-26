@@ -34,6 +34,7 @@ namespace AssignmentManagement.ApiTests
             Assert.True(response.IsSuccessStatusCode);
             Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
         }
+
         [Fact]
         public async Task Can_Retrieve_All_Assignments()
         {
@@ -59,6 +60,7 @@ namespace AssignmentManagement.ApiTests
             Assert.NotNull(assignments);
             Assert.Contains(assignments, a => a.Title == title);
         }
+
         [Fact]
         public async Task Can_List_Incomplete_Assignments()
         {
@@ -83,7 +85,67 @@ namespace AssignmentManagement.ApiTests
             var assignments = await response.Content.ReadFromJsonAsync<List<AssignmentDto>>(options);
             Assert.Contains(assignments, a => a.Title == title && !a.IsCompleted);
         }
+
         [Fact]
+        public async Task Can_List_Assignments_Sorted_By_Priority()
+        {
+            // Arrange
+            var titleLow = $"PriorityLow-{Guid.NewGuid()}";
+            var titleHigh = $"PriorityHigh-{Guid.NewGuid()}";
+            var titleMedium = $"PriorityMedium-{Guid.NewGuid()}";
+
+            var assignments = new List<AssignmentDto>
+            {
+                new AssignmentDto
+                {
+                    Title = titleLow,
+                    Description = "Low Priority",
+                    Notes = "",
+                    IsCompleted = false,
+                    Priority = Priority.Low
+                },
+                new AssignmentDto
+                {
+                    Title = titleHigh,
+                    Description = "High Priority",
+                    Notes = "",
+                    IsCompleted = false,
+                    Priority = Priority.High
+                },
+                new AssignmentDto
+                {
+                    Title = titleMedium,
+                    Description = "Medium Priority",
+                    Notes = "",
+                    IsCompleted = false,
+                    Priority = Priority.Medium
+                }
+            };
+
+            foreach (var dto in assignments)
+            {
+                var response = await _client.PostAsJsonAsync("/api/assignment", dto);
+                Assert.True(response.IsSuccessStatusCode);
+            }
+
+            // Act
+            var responseList = await _client.GetAsync("/api/assignment/by-priority");
+            responseList.EnsureSuccessStatusCode();
+
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            options.Converters.Add(new JsonStringEnumConverter());
+            var result = await responseList.Content.ReadFromJsonAsync<List<AssignmentDto>>(options);
+
+            var returnedTitles = result
+                .Where(a => a.Title == titleLow || a.Title == titleMedium || a.Title == titleHigh)
+                .Select(a => a.Title)
+                .ToList();
+
+            // Assert
+            var expectedOrder = new List<string> { titleHigh, titleMedium, titleLow };
+            Assert.Equal(expectedOrder, returnedTitles);
+        }
+
         public async Task Can_Find_Assignment_By_Title()
         {
             var title = $"FindMe-{Guid.NewGuid()}";
@@ -107,6 +169,7 @@ namespace AssignmentManagement.ApiTests
             var assignment = await response.Content.ReadFromJsonAsync<AssignmentDto>(options);
             Assert.Equal(title, assignment.Title);
         }
+
         [Fact]
         public async Task Can_Update_Assignment()
         {
@@ -150,6 +213,7 @@ namespace AssignmentManagement.ApiTests
             Assert.True(result.IsCompleted);
             Assert.Equal(Priority.High, result.Priority);
         }
+
         [Fact]
         public async Task Can_Delete_Assignment()
         {
@@ -171,6 +235,7 @@ namespace AssignmentManagement.ApiTests
             var getResponse = await _client.GetAsync($"/api/assignment/{Uri.EscapeDataString(title)}");
             Assert.Equal(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
         }
+
         [Fact]
         public async Task Can_Add_Note_To_Assignment()
         {
