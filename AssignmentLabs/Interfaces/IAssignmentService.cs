@@ -16,7 +16,7 @@ namespace AssignmentLibrary.Core.Interfaces
         public Assignment FindAssignmentByTitle(string title);
         public bool MarkAssignmentComplete(string title);
         public bool DeleteAssignment(string title);
-        bool UpdateAssignment(string originalTitle, string newTitle, string newDescription, bool isCompleted, Priority priority);
+        bool UpdateAssignment(string originalTitle, string newTitle, string newDescription, string notes, bool isCompleted, Priority priority);
         Assignment? FindByTitle(string title);
     }
 }

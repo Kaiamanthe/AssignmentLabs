@@ -5,28 +5,36 @@ public class Assignment
     public Guid Id { get; } = Guid.NewGuid();
     public string Title { get; private set; } = default!;
     public string Description { get; private set; } = default!;
+    public string Notes { get; set; } = string.Empty;
     public bool IsCompleted { get; private set; }
     public Priority Priority { get; private set; }
 
+    public Assignment()
+    {
+        // Parameterless constructor for serialization or other purposes
+    }
 
-    public Assignment(string title, string description, bool isCompleted = false, Priority priority = Priority.Medium)
+    public Assignment(string title, string description, string note, bool isCompleted = false, Priority priority = Priority.Medium)
     {
         ValHelper(title, description);
         Title = title;
         Description = description;
+        Notes = note;
         IsCompleted = isCompleted;
         Priority = priority;
     }
 
 
-    public void Update(string newTitle, string newDescription, bool newcompletion, Priority priority)
+    public void Update(string newTitle, string notes, string newDescription, bool newCompletion, Priority priority)
     {
         ValHelper(newTitle, newDescription);
         Title = newTitle;
         Description = newDescription;
-        IsCompleted = newcompletion;
+        IsCompleted = newCompletion;
         Priority = priority;
+        Notes = notes ?? string.Empty;
     }
+
 
     public bool UpdatePriority(Priority newPriority)
     {
