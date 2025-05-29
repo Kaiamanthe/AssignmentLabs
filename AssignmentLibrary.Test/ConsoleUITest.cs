@@ -59,44 +59,71 @@ namespace AssignmentLibrary.Tests
         {
             // Arrange
             var mockService = new Mock<IAssignmentService>();
+            var testAssignment = new Assignment("New Assignment", "New Description", "Test Notes", false, Priority.Medium);
+
+            mockService.Setup(x => x.AddAssignment(testAssignment)).Returns(true);
 
             // Act
-            mockService.Setup(x => x.AddAssignment(new Assignment("New Assignment", "New Description", "Test Notes", false, Priority.Medium))).Returns(true);
-            mockService.Object.AddAssignment(null);
+            var result = mockService.Object.AddAssignment(testAssignment);
 
             // Assert
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
         }
+
 
         [Fact]
         public void SearchAssignmentByTitle_MoqObjectShouldReturnObjectIfTitleFound()
         {
             // Arrange
             var mockService = new Mock<IAssignmentService>();
-            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", "Test Notes", false));
+
+            var expectedAssignment = new Assignment("Test Title", "Test Description", "Test Notes", false);
+
+            mockService.Setup(s => s.FindAssignmentByTitle("Test Title"))
+                       .Returns(expectedAssignment);
 
             // Act
-            mockService.Setup(s => s.FindAssignmentByTitle("Test Title"))
-                       .Returns(new Assignment("Test Title", "Test Description", "Test Notes", false));
-            mockService.Object.FindAssignmentByTitle("Test Title");
+            var result = mockService.Object.FindAssignmentByTitle("Test Title");
 
             // Assert
+            Assert.NotNull(result);
             mockService.Verify(m => m.FindAssignmentByTitle("Test Title"), Times.Once);
         }
+
         [Fact]
-        public void DeleteAssignment_ShouldRemovedMockObject()
+        public void DeleteAssignment_ShouldRemoveAssignmentFromSimulatedStore()
         {
             // Arrange
             var mockService = new Mock<IAssignmentService>();
+            var assignments = new List<Assignment>();
+
+            // Sim AddAssignment
+            mockService.Setup(x => x.AddAssignment(It.IsAny<Assignment>()))
+                       .Callback<Assignment>(a => assignments.Add(a))
+                       .Returns(true);
+
+            // Sim DeleteAssignment
+            mockService.Setup(x => x.DeleteAssignment(It.IsAny<string>()))
+                       .Callback<string>(title =>
+                       {
+                           var item = assignments.FirstOrDefault(a => a.Title == title);
+                           if (item != null)
+                           {
+                               assignments.Remove(item);
+                           }
+                       })
+                       .Returns(true);
+
+            var testAssignment = new Assignment("Test Title", "Test Description", "Test Notes", false);
 
             // Act
-            mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", "Test Notes", false));
-            mockService.Setup(x => x.DeleteAssignment("Test Title")).Returns(true);
+            mockService.Object.AddAssignment(testAssignment);
             mockService.Object.DeleteAssignment("Test Title");
 
             // Assert
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
             mockService.Verify(m => m.DeleteAssignment("Test Title"), Times.Once);
+            Assert.DoesNotContain(assignments, a => a.Title == "Test Title");
         }
 
         [Fact]
@@ -110,7 +137,7 @@ namespace AssignmentLibrary.Tests
 
             var ui = new ConsoleUI(mockService.Object);
 
-            // Simulate user input: title, then new note
+            // Sim user input
             var input = new StringReader("Test Assignment\nNew test note\n");
             Console.SetIn(input);
 
