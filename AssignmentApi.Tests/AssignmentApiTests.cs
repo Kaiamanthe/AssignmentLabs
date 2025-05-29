@@ -146,6 +146,7 @@ namespace AssignmentManagement.ApiTests
             Assert.Equal(expectedOrder, returnedTitles);
         }
 
+        [Fact]
         public async Task Can_Find_Assignment_By_Title()
         {
             var title = $"FindMe-{Guid.NewGuid()}";

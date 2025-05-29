@@ -192,7 +192,7 @@
             service.AddAssignment(assignment);
 
             // Act
-            assignment.Update("New Title", "New Description", "Noted", true, Priority.Medium);
+            service.UpdateAssignment("Old title", "New Title", "New Description", "Noted", true, Priority.Medium);
 
             // Assert
             Assert.Equal("New Title", assignment.Title);
