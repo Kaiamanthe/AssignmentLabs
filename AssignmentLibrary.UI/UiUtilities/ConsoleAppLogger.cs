@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AssignmentLibrary.Core.Interfaces;
 
-namespace AssignmentLibrary.UI
+namespace AssignmentLibrary.UI.UiUtilities
 {
     public class ConsoleAppLogger : IAppLogger
     {

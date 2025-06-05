@@ -4,7 +4,7 @@
     using AssignmentLibrary.Core.Interfaces;
     using AssignmentLibrary.Core.Models;
     using AssignmentLibrary.Core.Services;
-    using AssignmentLibrary.UI;
+    using AssignmentLibrary.UI.UiUtilities;
     using Moq;
     using Xunit;
 

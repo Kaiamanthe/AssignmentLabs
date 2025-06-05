@@ -2,17 +2,15 @@
 
 public class Assignment
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public Guid Id { get; } = Guid.NewGuid();
     public string Title { get; private set; } = default!;
     public string Description { get; private set; } = default!;
     public string Notes { get; set; } = string.Empty;
     public bool IsCompleted { get; private set; }
     public Priority Priority { get; private set; }
-
-    public Assignment()
-    {
-        // Parameterless constructor for serialization or other purposes
-    }
 
     public Assignment(string title, string description, string note, bool isCompleted = false, Priority priority = Priority.Medium)
     {
@@ -24,7 +22,6 @@ public class Assignment
         Priority = priority;
     }
 
-
     public void Update(string newTitle,  string newDescription, string notes, bool newCompletion, Priority priority)
     {
         ValHelper(newTitle, newDescription);
@@ -34,7 +31,6 @@ public class Assignment
         Priority = priority;
         Notes = notes ?? string.Empty;
     }
-
 
     public bool UpdatePriority(Priority newPriority)
     {
@@ -49,15 +45,15 @@ public class Assignment
         if (string.IsNullOrWhiteSpace(input))
             throw new ArgumentException($"{fieldName} cannot be blank or whitespace.");
     }
-
     private void ValHelper(string titleField, string descriptionField)
     {
         Validate(titleField, nameof(Title));
         Validate(descriptionField, nameof(Description));
     }
-
     public void MarkComplete()
     {
         IsCompleted = true;
     }
+
+
 }

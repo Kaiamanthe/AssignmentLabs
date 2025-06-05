@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AssignmentLibrary.Core.Interfaces;
 using AssignmentLibrary.Core.Models;
 
-namespace AssignmentLibrary.UI
+namespace AssignmentLibrary.UI.UiUtilities
 {
     public class AssignmentFormatter : IAssignmentFormatter
     {

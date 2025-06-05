@@ -16,6 +16,36 @@ namespace AssignmentLibrary.Api.Controllers
             _service = service;
         }
 
+        [HttpPost]
+        public IActionResult Create(AssignmentDto dto)
+        {
+            try
+            {
+                var assignmentdto = new Assignment(dto.Title, dto.Description, dto.Notes, dto.IsCompleted, dto.Priority);
+                var success = _service.AddAssignment(assignmentdto);
+                if (!success)
+                    return Conflict("Assignment with this title already exists.");
+                return CreatedAtAction(nameof(GetByTitle), new { title = dto.Title }, dto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("{title}/note")]
+        public IActionResult AddNoteToAssignment(string title, [FromBody] string note)
+        {
+            var assignment = _service.FindAssignmentByTitle(title);
+            if (assignment == null)
+            {
+                return NotFound("Assignment not found.");
+            }
+
+            assignment.Notes = note ?? string.Empty;
+            return Ok("Note added or updated successfully.");
+        }
+
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -42,23 +72,6 @@ namespace AssignmentLibrary.Api.Controllers
             return assignment == null ? NotFound() : Ok(assignment);
         }
 
-        [HttpPost]
-        public IActionResult Create(AssignmentDto dto)
-        {
-            try
-            {
-                var assignmentdto = new Assignment(dto.Title, dto.Description, dto.Notes, dto.IsCompleted, dto.Priority);
-                var success = _service.AddAssignment(assignmentdto);
-                if (!success)
-                    return Conflict("Assignment with this title already exists.");
-                return CreatedAtAction(nameof(GetByTitle), new { title = dto.Title }, dto);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpPut("{title}")]
         public IActionResult Update(string title, AssignmentDto dto)
         {
@@ -73,27 +86,13 @@ namespace AssignmentLibrary.Api.Controllers
             }
         }
 
-        [HttpPatch("{title}/note")]
-        public IActionResult AddNoteToAssignment(string title, [FromBody] string note)
-        {
-            var assignment = _service.FindAssignmentByTitle(title);
-            if (assignment == null)
-            {
-                return NotFound("Assignment not found.");
-            }
-
-            assignment.Notes = note ?? string.Empty;
-            return Ok("Note added or updated successfully.");
-        }
-
-
         [HttpPatch("{title}/complete")]
         public IActionResult MarkComplete(string title)
         {
             var success = _service.MarkAssignmentComplete(title);
             if (!success) return NotFound();
 
-            var assignment = _service.FindByTitle(title);
+            var assignment = _service.FindAssignmentByTitle(title);
             return Ok(assignment);
         }
 
