@@ -31,6 +31,30 @@
         }
 
         [Fact]
+        public void AddAssignment_ShouldFail_WhenDuplicateTitleExists()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment1 = new Assignment("Test", "Desc 1", "Notes", false);
+            var assignment2 = new Assignment("TEST", "Desc 2", "More Notes", false);
+
+            service.AddAssignment(assignment1);
+
+            // Act
+            var result = service.AddAssignment(assignment2);
+            var assignments = service.ListAll();
+
+            // Assert
+            Assert.False(result);
+            Assert.Single(assignments);
+            mockLogger.Verify(l => l.Log(It.Is<string>(msg => msg.Contains("duplicate title", StringComparison.OrdinalIgnoreCase))), Times.Once);
+        }
+
+        [Fact]
         public void ListAll_ShouldReturnAllAssignments()
         {
             // Arrange
@@ -120,6 +144,34 @@
         }
 
         [Fact]
+        public void ListAssignmentsByPriority_ShouldReturnAssignmentsSortedByPriority()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+
+            var lowPriority = new Assignment("Low Priority", "Task A", "Notes", false, Priority.Low);
+            var highPriority = new Assignment("High Priority", "Task B", "Notes", false, Priority.High);
+            var mediumPriority = new Assignment("Medium Priority", "Task C", "Notes", false, Priority.Medium);
+
+            service.AddAssignment(lowPriority);
+            service.AddAssignment(highPriority);
+            service.AddAssignment(mediumPriority);
+
+            // Act
+            var sorted = service.ListAssignmentsByPriority();
+
+            // Assert
+            Assert.Equal(3, sorted.Count);
+            Assert.Equal("High Priority", sorted[0].Title);
+            Assert.Equal("Medium Priority", sorted[1].Title);
+            Assert.Equal("Low Priority", sorted[2].Title);
+        }
+
+        [Fact]
         public void FindAssignmentByTitle_ShouldReturnCorrectAssignment()
         {
             // Arrange
@@ -137,6 +189,26 @@
             // Assert
             Assert.NotNull(result);
             Assert.Equal("Test Title", result.Title);
+        }
+
+        [Fact]
+        public void FindAssignmentByTitle_ShouldReturnAssignmentNotFound()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("Formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+
+            var assignment = new Assignment("Existing Task", "Test desc", "Notes", false);
+            service.AddAssignment(assignment);
+
+            // Act
+            var result = service.FindAssignmentByTitle("Nonexistent Title");
+
+            // Assert
+            Assert.Null(result);
         }
 
         [Fact]
@@ -197,6 +269,47 @@
             // Assert
             Assert.Equal("New Title", assignment.Title);
             Assert.Equal("New Description", assignment.Description);
+        }
+
+        [Fact]
+        public void UpdateAssignment_ShouldReturnAssignmentNotFound()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+
+            // Act
+            var result = service.UpdateAssignment("Missing Title", "New Title", "Desc", "Notes", false, Priority.Low);
+
+            // Assert
+            Assert.False(result);
+            mockLogger.Verify(l => l.Log("Update failed: 'Missing Title' not found."), Times.Once);
+        }
+
+        [Fact]
+        public void UpdateAssignment_ShouldFail_WhenAssignmentIsDuplicate()
+        {
+            // Arrange
+            var mockLogger = new Mock<IAppLogger>();
+            var mockFormatter = new Mock<IAssignmentFormatter>();
+            mockFormatter.Setup(f => f.Format(It.IsAny<Assignment>())).Returns("formatted");
+
+            var service = new AssignmentService(mockFormatter.Object, mockLogger.Object);
+            var assignment1 = new Assignment("Original", "Desc", "Notes", false);
+            var assignment2 = new Assignment("NewTitle", "Desc", "Notes", false);
+
+            service.AddAssignment(assignment1);
+            service.AddAssignment(assignment2);
+
+            // Act
+            var result = service.UpdateAssignment("Original", "NewTitle", "Updated Desc", "Updated Notes", true, Priority.High);
+
+            // Assert
+            Assert.False(result);
+            mockLogger.Verify(l => l.Log("Update failed: Duplicate title 'NewTitle' exists."), Times.Once);
         }
 
         [Fact]

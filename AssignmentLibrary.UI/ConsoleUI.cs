@@ -145,7 +145,7 @@ namespace AssignmentLibrary.UI
 
             if (_assignmentService.UpdateNote(title, newNote))
             {
-                Console.WriteLine("Note updated successfully.");
+                Console.WriteLine($"Note updated - Assignment: {assignment.Title}");
             }
             else
             {
@@ -273,7 +273,7 @@ namespace AssignmentLibrary.UI
             }
             else
             {
-                Console.WriteLine("Assignment update failed.");
+                Console.WriteLine("Update failed.");
             }
         }
 

@@ -1,58 +1,100 @@
-﻿using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AssignmentLibrary.UI;
+﻿using AssignmentLibrary.Core;
 using AssignmentLibrary.Core.Interfaces;
 using AssignmentLibrary.Core.Models;
 using AssignmentLibrary.Core.Services;
-using AssignmentLibrary.Core;
+using AssignmentLibrary.UI;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AssignmentLibrary.Tests
 {
     public class ConsoleUITest
     {
-        //[Fact] Test with Moq before interface revision
-        //public void AddAssignment_ShouldPassIfMoqObjectAdded()
-        //{
-        //    // Arrange
-        //    var mockService = new Mock<AssignmentService> { CallBase = true };
+        [Fact]
+        public void AddAssignment_ShouldCallServiceAssignmentData()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.AddAssignment(It.IsAny<Assignment>())).Returns(true);
 
-        //    // Act
-        //    mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", false));
+            var ui = new ConsoleUI(mockService.Object);
 
-        //    // Assert
-        //    Assert.NotNull(mockService);
-        //}
+            // Simulate user input
+            var input = new StringReader("Test Title\nTest Description\nTest Notes\nH\n");
+            Console.SetIn(input);
 
-        //[Fact]
-        //public void SearchAssignmentByTitle_MoqObjectShouldReturnObjectIfTitleFound()
-        //{
-        //    // Arrange
-        //    var mockService = new Mock<AssignmentService>();
-        //    mockService.Object.AddAssignment(new Assignment("Test Title", "Test Description", false));
+            var output = new StringWriter();
+            Console.SetOut(output);
 
-        //    // Act
-        //    var result = mockService.Object.FindAssignmentByTitle("Test Title");
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("AddAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
 
-        //    // Assert
-        //    Assert.Equal("Test Title", result.Title);
-        //}
+            // Assert
+            mockService.Verify(s => s.AddAssignment(It.Is<Assignment>(a =>
+                a.Title == "Test Title" &&
+                a.Description == "Test Description" &&
+                a.Notes == "Test Notes" &&
+                a.Priority == Priority.High &&
+                a.IsCompleted == false
+            )), Times.Once);
 
-        //[Fact]
-        //public void DeleteAssignment_ShouldRemovedMockObject()
-        //{
-        //    // Arrange
-        //    var mockService = new Mock<AssignmentService>();
+            Assert.Contains("Assignment added successfully.", output.ToString());
+        }
 
-        //    // Act
-        //    mockService.Object.DeleteAssignment("Test Title");
+        [Fact]
+        public void AddAssignment_ShouldPrintError_WhenFail()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.AddAssignment(It.IsAny<Assignment>())).Returns(false);
 
-        //    // Assert
-        //    Assert.Empty(mockService.Object.ListAll());
-        //}
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Title\nDescription\n\nL\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("AddAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
+
+            // Assert
+            Assert.Contains("An assignment with this title already exists.", output.ToString());
+        }
+
+        [Fact]
+        public void AddAssignment_ShouldUseDefaultPriority_WhenInputIsInvalid()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.AddAssignment(It.IsAny<Assignment>())).Returns(true);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Title\nDesc\n\n\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("AddAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
+
+            // Assert
+            mockService.Verify(s => s.AddAssignment(It.Is<Assignment>(a =>
+                a.Notes == "" &&
+                a.Priority == Priority.Medium
+            )), Times.Once);
+        }
 
         [Fact]
         public void AddAssignment_ShouldPassIfMoqObjectAdded()
@@ -70,9 +112,165 @@ namespace AssignmentLibrary.Tests
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
         }
 
+        [Fact]
+        public void AddNoteToAssignment_ShouldUpdateNote_WhenNoteIsEmpty()
+        {
+            // Arrange
+            var assignment = new Assignment("Test Assignment", "Desc", "", false, Priority.Medium);
+
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.FindAssignmentByTitle("Test Assignment")).Returns(assignment);
+            mockService.Setup(s => s.UpdateNote("Test Assignment", "New test note")).Returns(true);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Test Assignment\nNew test note\n");
+            Console.SetIn(input);
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            typeof(ConsoleUI)
+                .GetMethod("AddNoteToAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(ui, null);
+
+            // Assert
+            Assert.Contains("Note updated - Assignment: Test Assignment", output.ToString());
+            mockService.Verify(s => s.UpdateNote("Test Assignment", "New test note"), Times.Once);
+        }
 
         [Fact]
-        public void SearchAssignmentByTitle_MoqObjectShouldReturnObjectIfTitleFound()
+        public void AddNoteToAssignment_ShouldProduceConsoleOutput()
+        {
+            // Arrange
+            var assignment = new Assignment("Test Assignment", "Desc", "", false, Priority.Medium);
+
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.FindAssignmentByTitle("Test Assignment")).Returns(assignment);
+            mockService.Setup(s => s.UpdateNote(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Test Assignment\nSome test note content\n");
+            Console.SetIn(input);
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            typeof(ConsoleUI)
+                .GetMethod("AddNoteToAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.Invoke(ui, null);
+
+            // Assert
+            var consoleOutput = output.ToString();
+            Assert.Contains("Note updated - Assignment: Test Assignment", consoleOutput);
+        }
+
+        [Fact]
+        public void MarkAssignmentComplete_ShouldMarkAsComplete_WhenFound()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.MarkAssignmentComplete("Test Assignment")).Returns(true);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Test Assignment\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("MarkAssignmentComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
+
+            // Assert
+            var result = output.ToString();
+            Assert.Contains("Assignment marked as complete.", result);
+            mockService.Verify(s => s.MarkAssignmentComplete("Test Assignment"), Times.Once);
+        }
+
+        [Fact]
+        public void MarkAssignmentComplete_ShouldFail_WhenNotFound()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.MarkAssignmentComplete("Missing Assignment")).Returns(false);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Missing Assignment\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("MarkAssignmentComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
+
+            // Assert
+            var result = output.ToString();
+            Assert.Contains("Assignment not found.", result);
+            mockService.Verify(s => s.MarkAssignmentComplete("Missing Assignment"), Times.Once);
+        }
+
+        [Fact]
+        public void FindAssignmentByTitle_ShouldDisplayAssignment()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            var assignment = new Assignment("Title", "Desc", "Note", false, Priority.Medium);
+
+            mockService.Setup(s => s.FindAssignmentByTitle("Title")).Returns(assignment);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Title\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("FindAssignmentByTitle", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
+
+            // Assert
+            var consoleOutput = output.ToString();
+            Assert.Contains("Assignment: Title Description: Desc", consoleOutput);
+            Assert.Contains("Notes: Note", consoleOutput);
+            Assert.Contains("Priority: Medium", consoleOutput);
+            Assert.Contains("Completed: False", consoleOutput);
+        }
+
+        [Fact]
+        public void FindAssignmentByTitle_ShouldFail_WhenNotFound()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.FindAssignmentByTitle("Title")).Returns((Assignment)null!);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Title\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("FindAssignmentByTitle", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
+
+            // Assert
+            var consoleOutput = output.ToString();
+            Assert.Contains("Assignment not found.", consoleOutput);
+        }
+
+        [Fact]
+        public void FindAssignmentByTitle_MoqObjectShouldReturnObjectIfTitleFound()
         {
             // Arrange
             var mockService = new Mock<IAssignmentService>();
@@ -88,6 +286,82 @@ namespace AssignmentLibrary.Tests
             // Assert
             Assert.NotNull(result);
             mockService.Verify(m => m.FindAssignmentByTitle("Test Title"), Times.Once);
+        }
+
+        [Fact]
+        public void UpdateAssignment_ShouldFail_WhenFalse()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            var assignment = new Assignment("Test", "Old Desc", "Old Notes", false, Priority.Low);
+            mockService.Setup(s => s.FindAssignmentByTitle("Test")).Returns(assignment);
+            mockService.Setup(s => s.UpdateAssignment(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<Priority>())).Returns(false);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Test\nNew Title\nNew Desc\nNew Notes\nn\nM\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("UpdateAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            method!.Invoke(ui, null);
+
+            // Assert
+            var consoleOut = output.ToString();
+            Assert.Contains("Update failed.", consoleOut);
+        }
+
+        [Fact]
+        public void DeleteAssignment_ShouldDelete()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.DeleteAssignment("Test Assignment")).Returns(true);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Test Assignment\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("DeleteAssignment", BindingFlags.Instance | BindingFlags.NonPublic);
+            method!.Invoke(ui, null);
+
+            // Assert
+            var consoleOut = output.ToString();
+            Assert.Contains("Assignment deleted successfully.", consoleOut);
+            mockService.Verify(s => s.DeleteAssignment("Test Assignment"), Times.Once);
+        }
+
+        [Fact]
+        public void DeleteAssignment_ShouldFail_WhenAssignmentNotFound()
+        {
+            // Arrange
+            var mockService = new Mock<IAssignmentService>();
+            mockService.Setup(s => s.DeleteAssignment("Missing Assignment")).Returns(false);
+
+            var ui = new ConsoleUI(mockService.Object);
+
+            var input = new StringReader("Missing Assignment\n");
+            Console.SetIn(input);
+
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            var method = typeof(ConsoleUI).GetMethod("DeleteAssignment", BindingFlags.Instance | BindingFlags.NonPublic);
+            method!.Invoke(ui, null);
+
+            // Assert
+            var consoleOut = output.ToString();
+            Assert.Contains("Assignment not found.", consoleOut);
+            mockService.Verify(s => s.DeleteAssignment("Missing Assignment"), Times.Once);
         }
 
         [Fact]
@@ -124,61 +398,6 @@ namespace AssignmentLibrary.Tests
             mockService.Verify(m => m.AddAssignment(It.IsAny<Assignment>()), Times.Once);
             mockService.Verify(m => m.DeleteAssignment("Test Title"), Times.Once);
             Assert.DoesNotContain(assignments, a => a.Title == "Test Title");
-        }
-
-        [Fact]
-        public void AddNoteToAssignment_ShouldUpdateNote_WhenNoteIsEmpty()
-        {
-            // Arrange
-            var assignment = new Assignment("Test Assignment", "Desc", "", false, Priority.Medium);
-
-            var mockService = new Mock<IAssignmentService>();
-            mockService.Setup(s => s.FindAssignmentByTitle("Test Assignment")).Returns(assignment);
-
-            var ui = new ConsoleUI(mockService.Object);
-
-            // Sim user input
-            var input = new StringReader("Test Assignment\nNew test note\n");
-            Console.SetIn(input);
-
-            var output = new StringWriter();
-            Console.SetOut(output);
-
-            // Act
-            var method = typeof(ConsoleUI)
-                .GetMethod("AddNoteToAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            method.Invoke(ui, null);
-
-            // Assert
-            Assert.Equal("New test note", assignment.Notes);
-            Assert.Contains("Note updated - Assignment: Test Assignment", output.ToString());
-        }
-
-        [Fact]
-        public void AddNoteToAssignment_ShouldProduceConsoleOutput()
-        {
-            // Arrange
-            var assignment = new Assignment("Test Assignment", "Desc", "", false, Priority.Medium);
-            var mockService = new Mock<IAssignmentService>();
-            mockService.Setup(s => s.FindAssignmentByTitle("Test Assignment")).Returns(assignment);
-
-            var ui = new ConsoleUI(mockService.Object);
-
-            var input = new StringReader("Test Assignment\nSome test note content\n");
-            Console.SetIn(input);
-
-            var output = new StringWriter();
-            Console.SetOut(output);
-
-            // Act
-            var method = typeof(ConsoleUI)
-                .GetMethod("AddNoteToAssignment", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            method.Invoke(ui, null);
-
-            // Assert
-            var consoleOutput = output.ToString();
-            Assert.False(string.IsNullOrWhiteSpace(consoleOutput), "Console output should not be empty.");
-            Assert.Contains("Assignment: Test Assignment", consoleOutput);
         }
 
 
