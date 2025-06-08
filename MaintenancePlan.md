@@ -19,3 +19,7 @@
 **Security Patching**  
   Monitor CVEs relevant to third-party libraries and apply security patches within 7 days of discovery.
 
+**Issues to address**  
+  Some endpaths returns confirmation messages that needs to be updated/refactor
+  In the Post of the swagger, it only accepts lower case true or false, if it's capitalize "True and False" then it will return an error.
+
