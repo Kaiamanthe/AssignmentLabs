@@ -31,7 +31,7 @@ public class AssignmentLibraryTests
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
-            assignment.Update("Read Chapter 3", "", "Some Notes", false, Priority.Medium)
+            assignment.UpdateAssignment("Read Chapter 3", "", "Some Notes", false, Priority.Medium)
         );
     }
 

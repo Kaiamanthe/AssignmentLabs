@@ -5,15 +5,26 @@ using AssignmentLibrary.UI.UiUtilities;
 
 namespace AssignmentLibrary.UI
 {
+    /// <summary>
+    /// Console-based user interface for managing assignments.
+    /// Provides menu options for adding, updating, deleting, and listing assignments.
+    /// </summary>
     public class ConsoleUI
     {
         private readonly IAssignmentService _assignmentService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConsoleUI"/> class.
+        /// </summary>
+        /// <param name="assignmentService">Service for assignment operations.</param>
         public ConsoleUI(IAssignmentService assignmentService)
         {
             _assignmentService = assignmentService;
         }
 
+        /// <summary>
+        /// Starts the console menu loop for user interaction.
+        /// </summary>
         public void Run()
         {
             while (true)
@@ -68,10 +79,14 @@ namespace AssignmentLibrary.UI
                         Console.WriteLine("Invalid choice. Try again.");
                         break;
                 }
-
             }
         }
 
+        /// <summary>
+        /// Prompts the user for assignment priority and converts the input into a <see cref="Priority"/> enum.
+        /// </summary>
+        /// <param name="priority">Returns resolved priority value.</param>
+        /// <returns>Always returns true. Default input is Medium if input is not L or H.</returns>
         private bool PriorityHandler(out Priority priority)
         {
             var input = CustomConsole.InputLine("Enter Priority: (L)ow, (M)edium, or (H)igh [default M]:")
@@ -87,6 +102,10 @@ namespace AssignmentLibrary.UI
 
             return true;
         }
+
+        /// <summary>
+        /// Prompts the user for assignment details and adds a new assignment.
+        /// </summary>
         private void AddAssignment()
         {
             var title = CustomConsole.InputLine("Enter assignment title:");
@@ -106,6 +125,10 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("An assignment with this title already exists.");
             }
         }
+
+        /// <summary>
+        /// Prompts the user for an assignment title and adds or updates its note.
+        /// </summary>
         private void AddNoteToAssignment()
         {
             var title = CustomConsole.InputLine("What assignment do you want to add a note to? (Enter assignment title):");
@@ -129,6 +152,10 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("Failed to update note.");
             }
         }
+
+        /// <summary>
+        /// Displays all assignments.
+        /// </summary>
         private void ListAllAssignments()
         {
             var assignments = _assignmentService.ListAll();
@@ -143,6 +170,10 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description}{(string.IsNullOrWhiteSpace(assignment.Notes) ? "" : $" | Notes: {assignment.Notes}")} | Priority: {assignment.Priority} | Completed: {assignment.IsCompleted}");
             }
         }
+
+        /// <summary>
+        /// Displays all incomplete assignments.
+        /// </summary>
         private void ListIncompleteAssignments()
         {
             var assignments = _assignmentService.ListIncomplete();
@@ -157,6 +188,10 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description}{(string.IsNullOrWhiteSpace(assignment.Notes) ? "" : $" | Notes: {assignment.Notes}")} | Priority: {assignment.Priority} | Completed: {assignment.IsCompleted}");
             }
         }
+
+        /// <summary>
+        /// Displays all assignments by priority (descending).
+        /// </summary>
         private void ListAssignmentsByPriority()
         {
             var assignments = _assignmentService.ListAssignmentsByPriority();
@@ -171,6 +206,10 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description}{(string.IsNullOrWhiteSpace(assignment.Notes) ? "" : $" | Notes: {assignment.Notes}")} | Priority: {assignment.Priority} | Completed: {assignment.IsCompleted}");
             }
         }
+
+        /// <summary>
+        /// Marks assignment as complete by title user input.
+        /// </summary>
         private void MarkAssignmentComplete()
         {
             var title = CustomConsole.InputLine("Enter the title of the assignment to mark complete: ");
@@ -183,6 +222,10 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("Assignment not found.");
             }
         }
+
+        /// <summary>
+        /// Searches for and displays an assignment by title.
+        /// </summary>
         private void FindAssignmentByTitle()
         {
             var title = CustomConsole.InputLine("Enter title of assignment for search: ");
@@ -197,9 +240,13 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine($"Assignment: {assignment.Title} Description: {assignment.Description}{(string.IsNullOrWhiteSpace(assignment.Notes) ? "" : $" | Notes: {assignment.Notes}")} | Priority: {assignment.Priority} | Completed: {assignment.IsCompleted}");
             }
         }
+
+        /// <summary>
+        /// Prompts the user to update an existing assignment.
+        /// </summary>
         private void UpdateAssignment()
         {
-            var oldTitle = CustomConsole.InputLine("Enter the title of the assignment to update:");
+            var oldTitle = CustomConsole.InputLine("Enter the title of the assignment to update: ");
             var assignment = _assignmentService.FindAssignmentByTitle(oldTitle);
 
             if (assignment == null)
@@ -208,8 +255,8 @@ namespace AssignmentLibrary.UI
                 return;
             }
 
-            var newTitle = CustomConsole.InputLine("Enter new title:");
-            var newDescription = CustomConsole.InputLine("Enter new description:");
+            var newTitle = CustomConsole.InputLine("Enter new title: ");
+            var newDescription = CustomConsole.InputLine("Enter new description: ");
 
             if (!UpdateNotePrompt(assignment, out var newNote))
                 return;
@@ -229,6 +276,10 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("Assignment update failed.");
             }
         }
+
+        /// <summary>
+        /// Prompts the user to delete an assignment by title.
+        /// </summary>
         private void DeleteAssignment()
         {
             Console.Write("Enter the title of the assignment to delete: ");
@@ -242,10 +293,15 @@ namespace AssignmentLibrary.UI
                 Console.WriteLine("Assignment not found.");
             }
         }
+
+        /// <summary>
+        /// Prompts the user to add or update the note of an assignment.
+        /// </summary>
+        /// <param name="assignment">The assignment to update.</param>
+        /// <param name="updatedNote">The resulting note value.</param>
+        /// <returns>Always returns true. If the user cancels update, returns the current note unchanged.</returns>
         private bool UpdateNotePrompt(Assignment assignment, out string updatedNote)
         {
-            updatedNote = string.Empty;
-
             if (!string.IsNullOrWhiteSpace(assignment.Notes))
             {
                 var response = CustomConsole.InputLine("There's already a note in the assignment. Update the note? (Y/N):")
@@ -253,14 +309,18 @@ namespace AssignmentLibrary.UI
 
                 if (response != "Y")
                 {
-                    Console.WriteLine("Note not updated. Returning to main menu.");
-                    return false;
+                    Console.WriteLine("Note not updated.");
+                    updatedNote = assignment.Notes;
+                    return true;
                 }
+
+                updatedNote = CustomConsole.InputLine("Enter a note (Press 'enter' to leave blank): ");
+                return true;
             }
 
-            updatedNote = CustomConsole.InputLine("Enter the note content:");
+            Console.WriteLine("No note exists for this assignment.");
+            updatedNote = CustomConsole.InputLine("Enter a note (Press 'enter' to leave blank): ");
             return true;
         }
-
     }
 }
