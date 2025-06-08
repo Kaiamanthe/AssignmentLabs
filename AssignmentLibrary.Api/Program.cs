@@ -1,33 +1,52 @@
 using AssignmentLibrary.Core.Interfaces;
 using AssignmentLibrary.Core.Services;
 using AssignmentLibrary.UI;
-using Microsoft.Extensions.DependencyInjection;
+using AssignmentLibrary.UI.UiUtilities;
 using System.Text.Json.Serialization;
 
-
-
+/// <summary>
+/// Entry point for the AssignmentLibrary API application.
+/// Configures services, middleware, and endpoints.
+/// </summary>
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+/// <summary>
+/// Adds controller for JSON serialization to use string values for enums.
+/// </summary>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+/// <summary>
+/// Adds API support and Swagger generation.
+/// </summary>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+/// <summary>
+/// Registers OpenAPI.
+/// </summary>
+/// <remarks>
+/// Uses <c>Microsoft.AspNetCore.OpenApi</c> extensions.
+/// </remarks>
 builder.Services.AddOpenApi();
+
+/// <summary>
+/// Register services for dependency injection.
+/// </summary>
 builder.Services.AddSingleton<IAssignmentService, AssignmentService>();
 builder.Services.AddSingleton<IAppLogger, ConsoleAppLogger>();
 builder.Services.AddSingleton<IAssignmentFormatter, AssignmentFormatter>();
 builder.Services.AddSingleton<ConsoleUI>();
+
 var app = builder.Build();
 
-
-// Configure the HTTP request pipeline.
+/// <summary>
+/// Configures the HTTP request pipeline.
+/// Only enables Swagger UI in development.
+/// </summary>
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -35,15 +54,26 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+/// <summary>
+/// Enables authorization middleware.
+/// </summary>
 app.UseAuthorization();
 
+/// <summary>
+/// Maps controller routes to endpoints.
+/// </summary>
 app.MapControllers();
 
+/// <summary>
+/// Starts the web application.
+/// </summary>
 app.Run();
+
+/// <summary>
+/// Program class use for integration testing and test host setup.
+/// </summary>
 
 public partial class Program
 {
-    // This class is used for testing purpose only.
-    // It is not part of the actual application.
-    // The main entry point for the application is in the Program.cs file.
+    // This class is used for testing purposes only.
 }
